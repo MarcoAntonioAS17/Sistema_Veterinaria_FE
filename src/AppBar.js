@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FormClientes from "./Modulo Clientes/Formulario_Clientes";
 import {
     AppBar,
     Tabs,
     Tab,
     Typography,
     Box,
-    Grid,
-    TextField
+    Grid
 }from '@material-ui/core'
 
 function TabPanel(props) {
@@ -59,29 +59,17 @@ export default function SimpleTabs() {
             onChange={handleChange} 
             aria-label="simple tabs example"
             centered>
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
+          <Tab label="Listado de Clientes" {...a11yProps(0)} />
+          <Tab label="Nuevo Cliente" {...a11yProps(1)} />
           
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <h1>Hola Mundo</h1>
-        <TextField
-          id="outlined-full-width"
-          label="Label"
-          style={{ margin: 8 }}
-          placeholder="Placeholder"
-          helperText="Full width!"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          variant="outlined"
-        />
+      <h1>Hola React</h1>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <h1>Hola React</h1>
+        
+        <FormClientes/>
       </TabPanel>
       
     </Grid>

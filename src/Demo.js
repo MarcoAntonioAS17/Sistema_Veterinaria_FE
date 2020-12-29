@@ -11,7 +11,6 @@ import { Box } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        backgroundColor: "#eeeeee"
     },
     toolbar: {
         display: 'flex',
@@ -24,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     content: {
         WebkitBoxShadow: "0px 2px 4px rgba(0,0,0,.5)",
         width: '80%',
-        height: "1800px",
         backgroundColor: "#fff",
         marginBottom: "1rem",
     },
