@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormClientes from "./Modulo Clientes/Formulario_Clientes";
+import DataTable from "./Modulo Clientes/Tabla_Cliente";
 import {
     AppBar,
     Tabs,
     Tab,
-    Typography,
     Box,
     Grid
 }from '@material-ui/core'
+import{
+  ListAlt,
+  AddCircleOutline
+} from '@material-ui/icons';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -23,7 +27,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -52,20 +56,19 @@ export default function SimpleTabs() {
   };
 
   return (
-    <Grid lg={12}>
+    <Grid item={true} lg={12}>
       <AppBar position="static">
         <Tabs 
             value={value} 
             onChange={handleChange} 
             aria-label="simple tabs example"
             centered>
-          <Tab label="Listado de Clientes" {...a11yProps(0)} />
-          <Tab label="Nuevo Cliente" {...a11yProps(1)} />
-          
+          <Tab label="Listado de Clientes" icon={<ListAlt/>} {...a11yProps(0)} />
+          <Tab label="Nuevo Cliente" icon= {<AddCircleOutline/>} {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-      <h1>Hola React</h1>
+        <DataTable/>
       </TabPanel>
       <TabPanel value={value} index={1}>
         

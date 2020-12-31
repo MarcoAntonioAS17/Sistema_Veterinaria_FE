@@ -14,13 +14,13 @@ import{
     Cancel
 } from '@material-ui/icons';
 
+
 const useStyles = makeStyles(() => ({
     button: {
         textAlign: 'center',
         margin: '1rem'
     },
     buttonContainer: {
-        
         display: 'flex',
         justifyContent: 'center',
     },
@@ -39,7 +39,7 @@ export default function FormClientes() {
                     style={{ margin: 8 }}
                     fullWidth
                     margin="normal"
-                    required = 'true'
+                    required = {true}
                     variant="outlined"
                     placeholder ="Nombre"
                     InputProps={{
