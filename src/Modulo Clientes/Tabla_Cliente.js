@@ -34,6 +34,8 @@ import{
 import axios from 'axios';
 import MuiAlert from '@material-ui/lab/Alert';
 import EnhancedTableHead from './EnhancedTableHead';
+import {Link} from 'react-router-dom'
+
 
 function Alerta(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -311,9 +313,13 @@ export default function EnhancedTable(props) {
                                                             </Button>
                                                         </DialogActions>
                                                     </Dialog>
-                                                    <IconButton color="primary" edge="end">
-                                                        <Edit />
-                                                    </IconButton>
+                                                    
+                                                    
+                                                    <Link to={"/Clientes/Editar/"+row.idClientes} >
+                                                        <IconButton color="primary" edge="end">
+                                                            <Edit />
+                                                        </IconButton>
+                                                    </Link>
                                                 </TableCell>
                                             </TableRow>
                                         );

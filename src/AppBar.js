@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FormClientes from "./Modulo Clientes/Formulario_Clientes";
 import DataTable from "./Modulo Clientes/Tabla_Cliente";
+import EditarClientes from './Modulo Clientes/EditarClientes'
 import {
     AppBar,
     Tabs,
@@ -13,6 +14,11 @@ import{
   ListAlt,
   AddCircleOutline
 } from '@material-ui/icons';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route
+    } from 'react-router-dom'; 
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,25 +62,32 @@ export default function SimpleTabs() {
   };
 
   return (
-    <Grid item={true} lg={12}>
-      <AppBar position="static">
-        <Tabs 
-            value={value} 
-            onChange={handleChange} 
-            aria-label="simple tabs example"
-            centered>
-          <Tab label="Listado de Clientes" icon={<ListAlt/>} {...a11yProps(0)} />
-          <Tab label="Nuevo Cliente" icon= {<AddCircleOutline/>} {...a11yProps(1)} />
-        </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0}>
-        <DataTable/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        
-        <FormClientes/>
-      </TabPanel>
-      
-    </Grid>
+    <Router>
+        <Grid item={true} lg={12}>
+            <AppBar position="static">
+                <Tabs 
+                    value={value} 
+                    onChange={handleChange} 
+                    aria-label="simple tabs example"
+                    centered>
+                    <Tab label="Listado de Clientes" icon={<ListAlt/>} {...a11yProps(0)} />
+                    <Tab label="Nuevo Cliente" icon= {<AddCircleOutline/>} {...a11yProps(1)} />
+                </Tabs>
+            </AppBar>
+            <TabPanel value={value} index={0}>
+
+                <Switch>
+                    <Route exact path='/Clientes/Editar/:id'  component={EditarClientes}/>
+                    <Route path='/' component={DataTable} />
+                </Switch>
+                
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+            
+            <FormClientes/>
+            </TabPanel>
+            
+        </Grid>
+    </Router>
   );
 }

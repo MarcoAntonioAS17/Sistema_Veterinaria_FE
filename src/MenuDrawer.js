@@ -7,11 +7,11 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText
-} from  "@material-ui/core"
+    } from  "@material-ui/core"
 import { 
     Drawer, 
     makeStyles 
-} from "@material-ui/core";
+    } from "@material-ui/core";
 import { 
     AttachMoney, 
     Event, 
@@ -20,7 +20,10 @@ import {
     Storefront, 
     Settings, 
     ExitToApp
-} from '@material-ui/icons';
+    } from '@material-ui/icons';
+import {
+	Link,
+    } from 'react-router-dom'; 
 
 const drawerWidth = 240;
 
@@ -56,6 +59,13 @@ const myStyles = makeStyles((theme) => ({
         // necessary for content to be below app bar
         ...theme.mixins.toolbar,
     },
+    enlace: {
+        textDecoration: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        
+    }
 }));
 
 export default function MenuDrawer(props) {
@@ -85,12 +95,17 @@ export default function MenuDrawer(props) {
                         <ListItemText primary="Ventas"/>
                     </ListItem>
                     <ListItem button key="Citas">
-                        <ListItemIcon> <Event/></ListItemIcon>
-                        <ListItemText primary="Citas"/>
+                        <Link to={"/Clientes"} className = {classes.enlace} >
+                        
+                            <ListItemIcon> <Event/></ListItemIcon>
+                            <ListItemText primary="Citas"/>
+                        </Link>
                     </ListItem>
                     <ListItem button key="Clientes">
-                        <ListItemIcon> <Pets/></ListItemIcon>
-                        <ListItemText primary="Clientes"/>
+                        <Link to={"/Clientes"} className = {classes.enlace} >
+                            <ListItemIcon> <Pets/></ListItemIcon>
+                            <ListItemText primary="Clientes"/>
+                        </Link>
                     </ListItem>
                 </List>
                 <Divider />
