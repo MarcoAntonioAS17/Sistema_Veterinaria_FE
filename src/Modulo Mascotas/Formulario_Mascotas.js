@@ -10,10 +10,11 @@ import MuiAlert from '@material-ui/lab/Alert';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
-    AccountCircle,
-    Phone,
-    AlternateEmail,
-    Cancel
+    Cancel,
+    Pets,
+    CalendarToday,
+    Info,
+    PermIdentity
 } from '@material-ui/icons';
 
 
@@ -36,26 +37,38 @@ export default function FormClientes() {
 
     const classes = useStyles();
     const [nombre, setNombre] = React.useState("");
-    const [telefono, setTelefono] = React.useState("");
-    const [correo, setCorreo] = React.useState("");
+    const [edad, setEdad] = React.useState(new Date());
+    const [tipo, setTipo] = React.useState("");
+    const [raza, setRaza] = React.useState("");
+    const [descrip, setDescrip] = React.useState("");
+    const [rcliente, setRcliente] = React.useState(0);
+
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
 
     const handleGuardarClick = () => {
+        console.log(edad+"T00:00:00");
         
-        axios.post ('http://localhost:50563/api/Clientes/',
+        axios.post ('http://localhost:50563/api/Mascotas',
 		{
 			"nombre": nombre,
-			"telefono": telefono,
-			"correo": correo,
+            "edad": edad+"T00:00:00",
+            "tipo": tipo,
+            "raza": raza,
+            "descripcion": descrip,
+            "rcliente": parseInt(rcliente,10)
 		}).then (
 			(response) => {
-                
+                console.log(response);
 				if (response.data.status === "Success") {
                     console.log("Guardado con exito");
-                    setCorreo("");
+                    
                     setNombre("");
-                    setTelefono("");
+                    setEdad(new Date());
+                    setTipo("");
+                    setRaza("");
+                    setDescrip("");
+                    setRcliente("");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
@@ -80,17 +93,20 @@ export default function FormClientes() {
     };
 
     const handleCancel = () =>{
-        setCorreo("");
         setNombre("");
-        setTelefono("");
+        setEdad(new Date());
+        setTipo("");
+        setRaza("");
+        setDescrip("");
+        setRcliente("");
     }
 
     return(
         <React.Fragment>
             <form>
                 <TextField
-                    id="Cliente_Nombre"
-                    label="Nombre del Cliente"
+                    id="Mascota_Nombre"
+                    label="Nombre de la Mascota"
                     style={{ margin: 8 }}
                     fullWidth
                     margin="normal"
@@ -102,49 +118,88 @@ export default function FormClientes() {
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle />
+                            <Pets />
                           </InputAdornment>
                         ),
                       }}
                 />
-                <TextField
-                    
-                    id="Cliente_Telefono"
-                    label="Número de telefono"
+                <TextField  
+                    id="Mascota_Edad"
+                    label="Fecha de nacimiento (Aprox)"
                     style={{ margin: 8 }}
                     fullWidth
-                    value = {telefono}
-                    onChange = {event => setTelefono(event.target.value)}
+                    value = {edad}
+                    onChange = {event => setEdad(event.target.value)}
                     margin="normal"
                     variant="outlined"
-                    placeholder = "299-XXX-XXXX"
+                    type = "date"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <Phone/>
+                            <CalendarToday/>
                           </InputAdornment>
                         ),
-                      }}
-                    
+                      }}  
                 />
                 <TextField
-                    id="Cliente_Email"
-                    label="Correo electrónico"
+                    id="Mascota_Tipo"
+                    label="Tipo de Mascota"
                     style={{ margin: 8 }}
                     fullWidth
-                    value = {correo}
-                    onChange = {event => setCorreo(event.target.value)}
+                    value = {tipo}
+                    onChange = {event => setTipo(event.target.value)}
                     margin="normal"
                     variant="outlined"
-
-                    placeholder = "email@dominio.com"
+                    placeholder = "¿Perro, gato u otro?"
+                    
+                />
+                <TextField       
+                    id="Mascota_Raza"
+                    label="Raza de la mascota"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {raza}
+                    onChange = {event => setRaza(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "Raza (si aplica)"
+                      
+                />
+                <TextField
+                    id="Mascota_Descripcion"
+                    label="Descripción"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {descrip}
+                    onChange = {event => setDescrip(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "Datos extra sobre la mascota"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AlternateEmail/>
+                            <Info/>
                           </InputAdornment>
                         ),
-                      }}
+                      }}  
+                />
+                <TextField
+                    id="Mascota_RCliente"
+                    label="Dueño de la mascota"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {rcliente}
+                    onChange = {event => setRcliente(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "Dueño"
+                    InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PermIdentity/>
+                          </InputAdornment>
+                        ),
+                      }}  
                 />
                 <div className = {classes.buttonContainer}>
                 <Button
@@ -165,7 +220,7 @@ export default function FormClientes() {
                     className = {classes.button}
                     variant="contained"
                     color="secondary"
-                    onClick = {handleCancel}
+                    onClick={handleCancel}
                     startIcon={<Cancel />}
                 >
                     Cancelar

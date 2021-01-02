@@ -33,7 +33,7 @@ import{
     } from '@material-ui/icons';
 import axios from 'axios';
 import MuiAlert from '@material-ui/lab/Alert';
-import EnhancedTableHead from './EnhancedTableHead';
+import TableHeadMascotas from './TableHeadMasctoas';
 import {Link} from 'react-router-dom'
 
 
@@ -95,7 +95,7 @@ const EnhancedTableToolbar = () => {
       className={clsx(classes.root)}
     >
         <Typography className={classes.title} variant="h3" id="tableTitle" component="div">
-          Clientes
+            Mascotas
         </Typography>
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
@@ -144,30 +144,27 @@ export default function EnhancedTable(props) {
     const [estado] = React.useState(false);
 
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('idClientes');
+    const [orderBy, setOrderBy] = React.useState('idMascotas');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
     const [openDialog, setOpenDialog] = React.useState(false);
-
+    
     const [item, setItem] = React.useState(null);
 
     function delete_clie(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Clientes/" + item.idClientes)
+        axios.delete ("http://localhost:50563/api/Mascotas/" + item.idMascotas)
             .then(response => {
                 if (response.data.status === "Success") {
                   
                     //Borramos del cache
-                    //console.log(rows);
                     var tempRows = rows;
                     var index2 = tempRows.indexOf(item);
-                    //console.log("ID=> "+id+" Index=>"+index2);
                     tempRows.splice(index2,1);
                     setRows(tempRows);
-                    //console.log(rows);
                     setOpenbar(true);
                     setSuccesbar(true);
                 
@@ -216,7 +213,7 @@ export default function EnhancedTable(props) {
 
         const ac = new AbortController();
         Promise.all([
-            fetch("http://localhost:50563/api/Clientes/",{
+            fetch("http://localhost:50563/api/Mascotas/",{
             signal: ac.signal,
             method: 'GET',
             mode: 'cors'
@@ -270,7 +267,7 @@ export default function EnhancedTable(props) {
                                 size='small'
                                 aria-label="enhanced table"
                             >
-                                <EnhancedTableHead
+                                <TableHeadMascotas
                                     classes={classes}              
                                     order={order}
                                     orderBy={orderBy}
@@ -287,20 +284,23 @@ export default function EnhancedTable(props) {
                                             <TableRow
                                                 hover
                                                 tabIndex={-1}
-                                                key={row.idClientes}
+                                                key={row.idMascotas}
                                             >
                                                 <TableCell component="th" id={labelId} scope="row">
-                                                    {row.idClientes}
+                                                    {row.idMascotas}
                                                 </TableCell>
                                                 <TableCell >{row.nombre}</TableCell>
-                                                <TableCell >{row.telefono}</TableCell>
-                                                <TableCell >{row.correo}</TableCell>
+                                                <TableCell >{row.clienteNombre}</TableCell>
+                                                <TableCell >{row.edad}</TableCell>
+                                                <TableCell >{row.tipo}</TableCell>
+                                                <TableCell >{row.raza}</TableCell>
+                                                <TableCell >{row.descripcion}</TableCell>
                                                 <TableCell >
                                                     <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
                                                         <Delete />
                                                     </IconButton>
-                                                   
-                                                    <Link to={"/Clientes/Editar/"+row.idClientes} >
+                                                    
+                                                    <Link to={"/Mascotas/Editar/"+row.idMascotas} >
                                                         <IconButton color="primary" edge="end">
                                                             <Edit />
                                                         </IconButton>
@@ -312,30 +312,29 @@ export default function EnhancedTable(props) {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                            <Dialog
-                                fullWidth={true}
-                                maxWidth = "sm"
-                                open={openDialog}
-                                onClose={handleDialogOpen}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title">{"Confirmación"}</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
-                                        ¿Eliminar cliente {item !=null? item.nombre: ""}?
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleDialogOpen} color="primary" autoFocus>
-                                        Cancelar
-                                    </Button>
-                                    <Button onClick={() => delete_clie(item)} color="secondary" >
-                                        Eliminar
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                        
+                        <Dialog
+                            fullWidth={true}
+                            maxWidth = "sm"
+                            open={openDialog}
+                            onClose={handleDialogOpen}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">Confirmación</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    ¿Eliminar mascota {item !=null? item.nombre+" ID "+item.idMascotas: ""}?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleDialogOpen} color="primary" autoFocus>
+                                    Cancelar
+                                </Button>
+                                <Button onClick={() => delete_clie(item)} color="secondary" >
+                                    Eliminar
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25]}
                             component="div"

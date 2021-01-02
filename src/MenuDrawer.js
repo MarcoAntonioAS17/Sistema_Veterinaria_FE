@@ -19,7 +19,8 @@ import {
     Store, 
     Storefront, 
     Settings, 
-    ExitToApp
+    ExitToApp,
+    Contacts
     } from '@material-ui/icons';
 import {
 	Link,
@@ -61,6 +62,7 @@ const myStyles = makeStyles((theme) => ({
     },
     enlace: {
         textDecoration: 'none',
+        color: "#000",
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -91,11 +93,13 @@ export default function MenuDrawer(props) {
                 <Divider />
                 <List>
                     <ListItem button key="Ventas">
-                        <ListItemIcon> <AttachMoney/></ListItemIcon>
-                        <ListItemText primary="Ventas"/>
+                        <Link to={"/Ventas"} className = {classes.enlace} >
+                            <ListItemIcon> <AttachMoney/></ListItemIcon>
+                            <ListItemText primary="Ventas"/>
+                        </Link>
                     </ListItem>
                     <ListItem button key="Citas">
-                        <Link to={"/Clientes"} className = {classes.enlace} >
+                        <Link to={"/Citas"} className = {classes.enlace} >
                         
                             <ListItemIcon> <Event/></ListItemIcon>
                             <ListItemText primary="Citas"/>
@@ -103,31 +107,45 @@ export default function MenuDrawer(props) {
                     </ListItem>
                     <ListItem button key="Clientes">
                         <Link to={"/Clientes"} className = {classes.enlace} >
-                            <ListItemIcon> <Pets/></ListItemIcon>
+                            <ListItemIcon> <Contacts/></ListItemIcon>
                             <ListItemText primary="Clientes"/>
+                        </Link>
+                    </ListItem>
+                    <ListItem button key="Mascotas">
+                        <Link to={"/Mascotas"} className = {classes.enlace} >
+                            <ListItemIcon> <Pets/></ListItemIcon>
+                            <ListItemText primary="Mascotas"/>
                         </Link>
                     </ListItem>
                 </List>
                 <Divider />
                 <List>
                     <ListItem button key="Compras">
-                        <ListItemIcon> <Store/></ListItemIcon>
-                        <ListItemText primary="Compras"/>
+                        <Link to={"/Compras"} className = {classes.enlace} >
+                            <ListItemIcon> <Store/></ListItemIcon>
+                            <ListItemText primary="Compras"/>
+                        </Link>
                     </ListItem>
                     <ListItem button key="Inventario">
-                        <ListItemIcon> <Storefront/></ListItemIcon>
-                        <ListItemText primary="Inventario"/>
+                        <Link to={"/Inventario"} className = {classes.enlace} >
+                            <ListItemIcon> <Storefront/></ListItemIcon>
+                            <ListItemText primary="Inventario"/>
+                        </Link>
                     </ListItem>
                 </List>
                 <Divider />
                 <List>
                     <ListItem button key="Configuración">
-                        <ListItemIcon> <Settings/></ListItemIcon>
-                        <ListItemText primary="Configuración"/>
+                        <Link to={"/Configuracion"} className = {classes.enlace} >
+                            <ListItemIcon> <Settings/></ListItemIcon>
+                            <ListItemText primary="Configuración"/>
+                        </Link>
                     </ListItem>
                     <ListItem button key="Salir">
-                        <ListItemIcon> <ExitToApp/></ListItemIcon>
-                        <ListItemText primary="Salir"/>
+                        <Link to={"/Login"} className = {classes.enlace} >
+                            <ListItemIcon> <ExitToApp/></ListItemIcon>
+                            <ListItemText primary="Salir"/>
+                        </Link>
                     </ListItem>
                 </List>
             </Drawer>

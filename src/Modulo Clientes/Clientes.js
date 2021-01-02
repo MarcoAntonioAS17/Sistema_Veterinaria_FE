@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormClientes from "./Modulo Clientes/Formulario_Clientes";
-import DataTable from "./Modulo Clientes/Tabla_Cliente";
-import EditarClientes from './Modulo Clientes/EditarClientes'
+import FormClientes from "./Formulario_Clientes";
+import DataTable from "./Tabla_Cliente";
+import EditarClientes from './EditarClientes'
 import {
     AppBar,
     Tabs,
