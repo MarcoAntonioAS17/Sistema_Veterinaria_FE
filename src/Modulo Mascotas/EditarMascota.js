@@ -5,7 +5,11 @@ import {
     makeStyles,
     TextField,
     Snackbar,
-    Typography
+    Typography,
+    FormControl,
+    Select,
+    MenuItem,
+    InputLabel
     } from '@material-ui/core'
 import MuiAlert from '@material-ui/lab/Alert';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -14,8 +18,7 @@ import{
     Cancel,
     Pets,
     CalendarToday,
-    Info,
-    PermIdentity
+    Info
 } from '@material-ui/icons';
 import { Link, Redirect } from 'react-router-dom';
 
@@ -24,7 +27,7 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }  
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     button: {
         textAlign: 'center',
         margin: '1rem'
@@ -33,6 +36,16 @@ const useStyles = makeStyles(() => ({
         display: 'flex',
         justifyContent: 'center',
     },
+    formControl: {
+        margin: theme.spacing(1),
+        
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+    label: {
+        backgroundColor: "#fff",
+    }
 }));
 
 export default function EditarMascota(props) {
@@ -46,6 +59,7 @@ export default function EditarMascota(props) {
     const [raza, setRaza] = React.useState("");
     const [descrip, setDescrip] = React.useState("");
     const [rcliente, setRcliente] = React.useState(0);
+    const [clientes, setClientes] = React.useState(null);
     
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
@@ -110,145 +124,174 @@ export default function EditarMascota(props) {
                 setRaza(response.data.raza);
                 setDescrip(response.data.descripcion);
                 setRcliente(response.data.rCliente);
+
+                axios.get ('http://localhost:50563/api/Clientes',
+                {
+                    method: "GET",
+                    mode: 'cors'
+                })
+                .then (response2 => {
+                    if (response2.status === 200) {
+                        var res = response2.data;
+                        setClientes(res);
+                        console.log(res);
+                        console.log(res[0].idClientes);
+                    }
+                })
+                .catch (function (error) {
+                    console.log(error);
+                })
+
 			}
 		})
 		.catch (function (error) {
 			console.log(error);
-		})
+        })
+       
     },[idMascota]);
 
-    return(
-        <React.Fragment>
-            <Typography variant="h4"> Actualizar datos de Mascota {idMascota}</Typography>
-            <form>
-            <TextField
-                    id="Mascota_Nombre"
-                    label="Nombre de la Mascota"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    margin="normal"
-                    required = {true}
-                    variant="outlined"
-                    placeholder ="Nombre"
-                    value = {nombre}
-                    onChange = {event => setNombre(event.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Pets />
-                          </InputAdornment>
-                        ),
-                      }}
-                />
-                <TextField  
-                    id="Mascota_Edad"
-                    label="Fecha de nacimiento (Aprox)"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    value = {edad}
-                    onChange = {event => setEdad(event.target.value)}
-                    margin="normal"
-                    variant="outlined"
-                    type = "date"
-                    InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <CalendarToday/>
-                          </InputAdornment>
-                        ),
-                      }}  
-                />
-                <TextField
-                    id="Mascota_Tipo"
-                    label="Tipo de Mascota"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    value = {tipo}
-                    onChange = {event => setTipo(event.target.value)}
-                    margin="normal"
-                    variant="outlined"
-                    placeholder = "¿Perro, gato u otro?"
-                    
-                />
-                <TextField       
-                    id="Mascota_Raza"
-                    label="Raza de la mascota"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    value = {raza}
-                    onChange = {event => setRaza(event.target.value)}
-                    margin="normal"
-                    variant="outlined"
-                    placeholder = "Raza (si aplica)"
-                      
-                />
-                <TextField
-                    id="Mascota_Descripcion"
-                    label="Descripción"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    value = {descrip}
-                    onChange = {event => setDescrip(event.target.value)}
-                    margin="normal"
-                    variant="outlined"
-                    placeholder = "Datos extra sobre la mascota"
-                    InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Info/>
-                          </InputAdornment>
-                        ),
-                      }}  
-                />
-                <TextField
-                    id="Mascota_RCliente"
-                    label="Dueño de la mascota"
-                    style={{ margin: 8 }}
-                    fullWidth
-                    value = {rcliente}
-                    onChange = {event => setRcliente(event.target.value)}
-                    margin="normal"
-                    variant="outlined"
-                    placeholder = "Dueño"
-                    InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PermIdentity/>
-                          </InputAdornment>
-                        ),
-                      }}  
-                />
+    if (clientes == null) {
+        return(
+            <React.Fragment>
                 <div className = {classes.buttonContainer}>
-                <Button
-                    className = {classes.button}
-                    variant="contained"
-                    color="primary"
-                    startIcon = {<Save/>}
-                    onClick = {handleActualizar}
-                >
-                    Actualizar
-                </Button>
-                <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                        {succesbar ? "Actualizado con exito": "Error al actualizar"}
-                    </Alert>
-                </Snackbar>
-                {redi? <Redirect to="/Mascotas" />:null}
-                
-                <Link to={"/Mascotas"} className = {classes.enlace} >
+                    <Alert severity="error">Error al conectar con el servidor.</Alert>
+                </div>
+            </React.Fragment>
+        );
+    }else{
+
+        const opciones = clientes.map((elem) => 
+            <MenuItem key={elem.idClientes} value={elem.idClientes}>{elem.nombre}</MenuItem>
+        );
+        
+        return(
+            <React.Fragment>
+                <Typography variant="h4"> Actualizar datos de Mascota {idMascota}</Typography>
+                <form>
+                <TextField
+                        id="Mascota_Nombre"
+                        label="Nombre de la Mascota"
+                        style={{ margin: 8 }}
+                        fullWidth
+                        margin="normal"
+                        required = {true}
+                        variant="outlined"
+                        placeholder ="Nombre"
+                        value = {nombre}
+                        onChange = {event => setNombre(event.target.value)}
+                        InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Pets />
+                              </InputAdornment>
+                            ),
+                          }}
+                    />
+                    <TextField  
+                        id="Mascota_Edad"
+                        label="Fecha de nacimiento (Aprox)"
+                        style={{ margin: 8 }}
+                        fullWidth
+                        value = {edad}
+                        onChange = {event => setEdad(event.target.value)}
+                        margin="normal"
+                        variant="outlined"
+                        type = "date"
+                        InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <CalendarToday/>
+                              </InputAdornment>
+                            ),
+                          }}  
+                    />
+                    <TextField
+                        id="Mascota_Tipo"
+                        label="Tipo de Mascota"
+                        style={{ margin: 8 }}
+                        fullWidth
+                        value = {tipo}
+                        onChange = {event => setTipo(event.target.value)}
+                        margin="normal"
+                        variant="outlined"
+                        placeholder = "¿Perro, gato u otro?"
+                        
+                    />
+                    <TextField       
+                        id="Mascota_Raza"
+                        label="Raza de la mascota"
+                        style={{ margin: 8 }}
+                        fullWidth
+                        value = {raza}
+                        onChange = {event => setRaza(event.target.value)}
+                        margin="normal"
+                        variant="outlined"
+                        placeholder = "Raza (si aplica)"
+                          
+                    />
+                    <TextField
+                        id="Mascota_Descripcion"
+                        label="Descripción"
+                        style={{ margin: 8 }}
+                        fullWidth
+                        value = {descrip}
+                        onChange = {event => setDescrip(event.target.value)}
+                        margin="normal"
+                        variant="outlined"
+                        placeholder = "Datos extra sobre la mascota"
+                        InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Info/>
+                              </InputAdornment>
+                            ),
+                          }}  
+                    />
+                    <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <InputLabel className={classes.label} id="demo-simple-select-label">Dueño de la mascota</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value = {rcliente}
+                            onChange={event => setRcliente(event.target.value)}
+                        >
+                            {opciones}
+                        </Select>
+                    </FormControl>
+
+                    <div className = {classes.buttonContainer}>
                     <Button
                         className = {classes.button}
                         variant="contained"
-                        color="secondary"
-                        startIcon={<Cancel />}
+                        color="primary"
+                        startIcon = {<Save/>}
+                        onClick = {handleActualizar}
                     >
-                    Cancelar
-                </Button>
-                </Link>
-                </div>
-            </form>
-            
-        </React.Fragment>
-    );
+                        Actualizar
+                    </Button>
+                    <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                            {succesbar ? "Actualizado con exito": "Error al actualizar"}
+                        </Alert>
+                    </Snackbar>
+                    {redi? <Redirect to="/Mascotas" />:null}
+                    
+                    <Link to={"/Mascotas"} className = {classes.enlace} >
+                        <Button
+                            className = {classes.button}
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<Cancel />}
+                        >
+                        Cancelar
+                    </Button>
+                    </Link>
+                    </div>
+                </form>
+                
+            </React.Fragment>
+        );
+    }
+    
     
 }
