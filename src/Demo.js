@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cliente from './Modulo Clientes/Clientes';
 import Mascotas from './Modulo Mascotas/Mascotas';
+import Categorias from './Modulo Categorias/Categorias'
 import NavBar from './NavBar';
 import MenuDrawer from './MenuDrawer';
 
@@ -60,7 +61,7 @@ export default function MiniDrawer() {
                     <Switch>
                         <Route path='/Clientes'  component={Cliente}/>
                         <Route path='/Mascotas'  component={Mascotas}/>
-                        
+                        <Route path='/Inventario'  component={Categorias}/>
                     </Switch>
                 </Box>
             </main>
