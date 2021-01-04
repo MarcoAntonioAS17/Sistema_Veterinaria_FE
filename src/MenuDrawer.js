@@ -20,7 +20,8 @@ import {
     Storefront, 
     Settings, 
     ExitToApp,
-    Contacts
+    Contacts,
+    Shop
     } from '@material-ui/icons';
 import {
 	Link,
@@ -120,9 +121,15 @@ export default function MenuDrawer(props) {
                 </List>
                 <Divider />
                 <List>
+                    <ListItem button key="Proveedores">
+                        <Link to={"/Proveedores"} className = {classes.enlace} >
+                            <ListItemIcon> <Store/></ListItemIcon>
+                            <ListItemText primary="Proveedores"/>
+                        </Link>
+                    </ListItem>
                     <ListItem button key="Compras">
                         <Link to={"/Compras"} className = {classes.enlace} >
-                            <ListItemIcon> <Store/></ListItemIcon>
+                            <ListItemIcon> <Shop/></ListItemIcon>
                             <ListItemText primary="Compras"/>
                         </Link>
                     </ListItem>

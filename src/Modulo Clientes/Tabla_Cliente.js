@@ -33,7 +33,7 @@ import{
     } from '@material-ui/icons';
 import axios from 'axios';
 import MuiAlert from '@material-ui/lab/Alert';
-import EnhancedTableHead from './EnhancedTableHead';
+import TableHeadAll from '../Componentes_Genericos/TableHeadAll';
 import {Link} from 'react-router-dom'
 
 
@@ -133,6 +133,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 }));
+
+const headCells = [
+    { id: 'idClientes', numeric: true, label: 'ID' },
+    { id: 'nombre', numeric: false,  label: 'Nombre' },
+    { id: 'telefono', numeric: true, label: 'Número' },
+    { id: 'correo', numeric: false,  label: 'Correo' },
+    
+];
 
 export default function EnhancedTable(props) {
 
@@ -270,12 +278,13 @@ export default function EnhancedTable(props) {
                                 size='small'
                                 aria-label="enhanced table"
                             >
-                                <EnhancedTableHead
+                                <TableHeadAll
                                     classes={classes}              
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
                                     rowCount={rows.length}
+                                    headCells = {headCells}
                                 />
                                 <TableBody>
                                     {stableSort(rows, getComparator(order, orderBy))

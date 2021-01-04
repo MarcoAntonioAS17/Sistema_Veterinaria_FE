@@ -32,7 +32,7 @@ import{
     } from '@material-ui/icons';
 import axios from 'axios';
 import MuiAlert from '@material-ui/lab/Alert';
-import TableHeadCategorias from './TableHeadCategorias';
+import TableHeadAll from '../Componentes_Genericos/TableHeadAll';
 
 
 function Alerta(props) {
@@ -131,6 +131,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 }));
+
+
+const headCells = [
+    { id: 'idCategorias', numeric: true, label: 'ID' },
+    { id: 'nombre', numeric: false,  label: 'Nombre' }
+];
 
 export default function EnhancedTable(props) {
 
@@ -265,12 +271,13 @@ export default function EnhancedTable(props) {
                                 size='small'
                                 aria-label="enhanced table"
                             >
-                                <TableHeadCategorias
+                                <TableHeadAll
                                     classes={classes}              
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
                                     rowCount={rows.length}
+                                    headCells = {headCells}
                                 />
                                 <TableBody>
                                     {stableSort(rows, getComparator(order, orderBy))

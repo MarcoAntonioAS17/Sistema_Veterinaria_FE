@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormCategorias from './Formulario_Categorias';
-import Tabla_Categorias from './Tabla_Categorias';
+import FormCategorias from '../Modulo Categorias/Formulario_Categorias';
+import Tabla_Categorias from '../Modulo Categorias/Tabla_Categorias';
 import {
     AppBar,
     Tabs,

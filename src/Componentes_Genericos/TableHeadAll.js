@@ -8,17 +8,11 @@ import {
     TableSortLabel,
     }from '@material-ui/core';
 
-const headCells = [
-    { id: 'idClientes', numeric: true, label: 'ID' },
-    { id: 'nombre', numeric: false,  label: 'Nombre' },
-    { id: 'telefono', numeric: true, label: 'Número' },
-    { id: 'correo', numeric: false,  label: 'Correo' },
-    
-];
+
     
 
-export default function EnhancedTableHead(props) {
-    const { classes, order, orderBy, onRequestSort } = props;
+export default function TableHeadAll(props) {
+    const { classes, order, orderBy, onRequestSort, headCells } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -40,7 +34,7 @@ export default function EnhancedTableHead(props) {
                     <h4>{headCell.label}</h4>
                     {orderBy === headCell.id ? (
                         <span className={classes.visuallyHidden}>
-                            order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                         </span>
                     ) : null}
                 </TableSortLabel>
@@ -52,10 +46,11 @@ export default function EnhancedTableHead(props) {
     );
 }
 
-EnhancedTableHead.propTypes = {
+TableHeadAll.propTypes = {
     classes: PropTypes.object.isRequired,
     onRequestSort: PropTypes.func.isRequired,
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
+    headCells : PropTypes.array.isRequired,
 };
