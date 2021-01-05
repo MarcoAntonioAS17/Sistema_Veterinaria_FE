@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import Alert from '@material-ui/lab/Alert';
 import { 
@@ -95,7 +95,7 @@ const EnhancedTableToolbar = () => {
       className={clsx(classes.root)}
     >
         <Typography className={classes.title} variant="h3" id="tableTitle" component="div">
-          Proveedores
+            Mascotas
         </Typography>
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
@@ -135,10 +135,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const headCells = [
-    { id: 'idProveedores', numeric: true, label: 'ID' },
-    { id: 'proveedorNombre', numeric: false,  label: 'Nombre' },
-    { id: 'telefono', numeric: true, label: 'Número' },
-    { id: 'correo', numeric: false,  label: 'Correo' },
+    { id: 'idCitas', numeric: true, label: 'ID' },
+    { id: 'nombreCliente', numeric: false,  label: 'Cliente' },
+    { id: 'nombreMascota', numeric: false,  label: 'Mascota' },
+    { id: 'fechaHora', numeric: false,  label: 'Fecha y Hora' },
+    { id: 'tipo', numeric: false, label: 'Tipo' },
+    { id: 'notas', numeric: false,  label: 'Notas' },
     
 ];
 
@@ -146,25 +148,25 @@ export default function EnhancedTable(props) {
 
     const classes = useStyles();
     
-    const [rows, setRows] = React.useState({});
-    const [error, setError] = React.useState(null);
-    const [isFectched, setisFectched] = React.useState(false);
-    const [estado] = React.useState(false);
+    const [rows, setRows] = useState({});
+    const [error, setError] = useState(null);
+    const [isFectched, setisFectched] = useState(false);
+    const [estado] = useState(false);
 
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('idProveedores');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('idMascotas');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
     const [openDialog, setOpenDialog] = React.useState(false);
-
+    
     const [item, setItem] = React.useState(null);
 
-    function delete_pro(item) {
+    function delete_cita(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Proveedores/" + item.idProveedores)
+        axios.delete ("http://localhost:50563/api/Citas/" + item.idCitas)
             .then(response => {
                 if (response.data.status === "Success") {
                   
@@ -221,7 +223,7 @@ export default function EnhancedTable(props) {
 
         const ac = new AbortController();
         Promise.all([
-            fetch("http://localhost:50563/api/Proveedores/",{
+            fetch("http://localhost:50563/api/Citas/",{
             signal: ac.signal,
             method: 'GET',
             mode: 'cors'
@@ -281,7 +283,7 @@ export default function EnhancedTable(props) {
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
                                     rowCount={rows.length}
-                                    headCells = {headCells}
+                                    headCells={headCells}
                                 />
                                 <TableBody>
                                     {stableSort(rows, getComparator(order, orderBy))
@@ -293,20 +295,22 @@ export default function EnhancedTable(props) {
                                             <TableRow
                                                 hover
                                                 tabIndex={-1}
-                                                key={row.idProveedores}
+                                                key={row.idCitas}
                                             >
                                                 <TableCell component="th" id={labelId} scope="row">
-                                                    {row.idProveedores}
+                                                    {row.idCitas}
                                                 </TableCell>
-                                                <TableCell >{row.proveedorNombre}</TableCell>
-                                                <TableCell >{row.telefono}</TableCell>
-                                                <TableCell >{row.correo}</TableCell>
+                                                <TableCell >{row.nombreCliente}</TableCell>
+                                                <TableCell >{row.nombreMascota}</TableCell>
+                                                <TableCell >{row.fechaHora}</TableCell>
+                                                <TableCell >{row.tipo}</TableCell>
+                                                <TableCell >{row.notas}</TableCell>
                                                 <TableCell >
                                                     <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
                                                         <Delete />
                                                     </IconButton>
-                                                   
-                                                    <Link to={"/Proveedores/Editar/"+row.idProveedores} >
+                                                    
+                                                    <Link to={"/Mascotas/Editar/"+row.idCitas} >
                                                         <IconButton color="primary" edge="end">
                                                             <Edit />
                                                         </IconButton>
@@ -318,30 +322,29 @@ export default function EnhancedTable(props) {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                            <Dialog
-                                fullWidth={true}
-                                maxWidth = "sm"
-                                open={openDialog}
-                                onClose={handleDialogOpen}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title">{"Confirmación"}</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
-                                        ¿Eliminar proveedor {item !=null? item.proveedorNombre: ""}?
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleDialogOpen} color="primary" autoFocus>
-                                        Cancelar
-                                    </Button>
-                                    <Button onClick={() => delete_pro(item)} color="secondary" >
-                                        Eliminar
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                        
+                        <Dialog
+                            fullWidth={true}
+                            maxWidth = "sm"
+                            open={openDialog}
+                            onClose={handleDialogOpen}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">Confirmación</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    ¿Eliminar cita {item !=null? item.nombreCliente+", "+item.nombreMascota: ""}?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleDialogOpen} color="primary" autoFocus>
+                                    Cancelar
+                                </Button>
+                                <Button onClick={() => delete_cita(item)} color="secondary" >
+                                    Eliminar
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25]}
                             component="div"
@@ -354,7 +357,7 @@ export default function EnhancedTable(props) {
                     </Paper>
                     <Snackbar open={openbar} autoHideDuration={6000} onClose={handleClose}>
                         <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {succesbar ? "Registrado con exito": "Error al registrar"}
+                            {succesbar ? "Eliminado con exito": "Error al registrar"}
                         </Alerta>
                     </Snackbar>
                 </div>

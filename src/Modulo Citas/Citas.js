@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormProveedores from './Formulario_Proveedores';
-import Tabla_Proveedores from './Table_Proveedores';
+import FormCitas from "./Formulario_Citas";
+import Tabla_Citas from './Tabla_Citas';
+
 import {
     AppBar,
     Tabs,
@@ -10,15 +11,14 @@ import {
     Grid
 }from '@material-ui/core'
 import{
-    Add,
-    BusinessCenter
+  ListAlt,
+  AddCircleOutline
 } from '@material-ui/icons';
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route
     } from 'react-router-dom'; 
-import EditarProveedores from './EditarProveedores';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -70,24 +70,23 @@ export default function SimpleTabs() {
                     onChange={handleChange} 
                     aria-label="simple tabs example"
                     centered>
-                    
-                    <Tab label="Proveedores" icon= {<BusinessCenter/>} {...a11yProps(0)} />
-                    <Tab label="Nuevo Proveedor" icon= {<Add/>} {...a11yProps(1)} />
+                    <Tab label="Listado de Citas" icon={<ListAlt/>} {...a11yProps(0)} />
+                    <Tab label="Nueva Cita" icon= {<AddCircleOutline/>} {...a11yProps(1)} />
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
 
                 <Switch>
-                    <Route exact path='/Proveedores/Editar/:id' component = {EditarProveedores} />
-                    <Route path='/'  component = {Tabla_Proveedores}/>
+                    <Route exact path='/Citas/Editar/:id' />
+                    <Route path='/'  component={Tabla_Citas}/>
                 </Switch>
-            
+                
             </TabPanel>
             <TabPanel value={value} index={1}>
-
-                <FormProveedores/>
-
+            
+                <FormCitas/>
             </TabPanel>
+            
         </Grid>
     </Router>
   );

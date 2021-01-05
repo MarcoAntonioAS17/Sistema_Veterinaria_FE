@@ -4,9 +4,10 @@ import Cliente from './Modulo Clientes/Clientes';
 import Mascotas from './Modulo Mascotas/Mascotas';
 import Inventario from './Modulo Inventario/Inventario';
 import Proveedores from './Modulo Proveedores/Proveedores'
+import Citas from "./Modulo Citas/Citas";
+
 import NavBar from './NavBar';
 import MenuDrawer from './MenuDrawer';
-
 import {ThemeProvider} from '@material-ui/core/styles'
 import theme from './Tema'
 import { Box } from '@material-ui/core';
@@ -60,6 +61,7 @@ export default function MiniDrawer() {
                     mt="1rem"
                 >
                     <Switch>
+                        <Route path = '/Citas'  component={Citas}/>
                         <Route path = '/Clientes'  component={Cliente}/>
                         <Route path = '/Mascotas'  component={Mascotas}/>
                         <Route path = '/Inventario'  component={Inventario}/>
