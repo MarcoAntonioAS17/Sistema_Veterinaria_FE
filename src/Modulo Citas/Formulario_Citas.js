@@ -146,7 +146,9 @@ export default function FormClientes() {
                 if (response2.status === 200) {
                     var res = response2.data;
                     setMascotas(res);
-                    setRmascota(res[0].idMascotas)
+                    
+                    if(res.length > 0)
+                        setRmascota(res[0].idMascotas)
                 }
             })
             .catch (function (error) {

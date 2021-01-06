@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormCitas from "./Formulario_Citas";
+import Editar_Citas from "./Editar_Citas";
 import Tabla_Citas from './Tabla_Citas';
 
 import {
@@ -77,7 +78,7 @@ export default function SimpleTabs() {
             <TabPanel value={value} index={0}>
 
                 <Switch>
-                    <Route exact path='/Citas/Editar/:id' />
+                    <Route exact path='/Citas/Editar/:id' component={Editar_Citas} />
                     <Route path='/'  component={Tabla_Citas}/>
                 </Switch>
                 

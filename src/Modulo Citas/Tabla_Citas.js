@@ -95,7 +95,7 @@ const EnhancedTableToolbar = () => {
       className={clsx(classes.root)}
     >
         <Typography className={classes.title} variant="h3" id="tableTitle" component="div">
-            Mascotas
+            Citas
         </Typography>
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
@@ -310,7 +310,7 @@ export default function EnhancedTable(props) {
                                                         <Delete />
                                                     </IconButton>
                                                     
-                                                    <Link to={"/Mascotas/Editar/"+row.idCitas} >
+                                                    <Link to={"/Citas/Editar/"+row.idCitas} >
                                                         <IconButton color="primary" edge="end">
                                                             <Edit />
                                                         </IconButton>
