@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormCategorias from '../Modulo Categorias/Formulario_Categorias';
-import Tabla_Categorias from '../Modulo Categorias/Tabla_Categorias';
+import TablaCategorias from '../Modulo Categorias/Tabla_Categorias';
+import FormProductos from './Formulario_Productos';
+import TablaInventario from './Tabla_Inventario';
+import EditarInventario from './Editar_Inventario';
+
 import {
     AppBar,
     Tabs,
@@ -80,21 +84,18 @@ export default function SimpleTabs() {
             <TabPanel value={value} index={0}>
 
                 <Switch>
-                    <Route exact path='/Inventario/Editar/:id'  />
-                    <Route path='/'  />
+                    <Route exact path='/Inventario/Editar/:id' component = {EditarInventario}/>
+                    <Route path='/'  component={TablaInventario} />
                 </Switch>
                 
             </TabPanel>
             <TabPanel value={value} index={1}>
-                
+                <FormProductos/>
             </TabPanel>
 
             <TabPanel value={value} index={2}>
 
-                <Switch>
-                    <Route exact path='/Inventario/EditarCategoria/:id'  />
-                    <Route path='/'  component={Tabla_Categorias}/>
-                </Switch>
+                <TablaCategorias/>
             
             </TabPanel>
             <TabPanel value={value} index={3}>
