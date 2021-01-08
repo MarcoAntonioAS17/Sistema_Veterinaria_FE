@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Tabla_Mascotas from './Tabla_Mascotas';
 import FormMascotas from './Formulario_Mascotas';
 import EditarMascotas from './EditarMascota';
@@ -7,51 +6,20 @@ import {
     AppBar,
     Tabs,
     Tab,
-    Box,
     Grid
 }from '@material-ui/core'
 import{
-  ListAlt,
-  AddCircleOutline
+    ListAlt,
+    AddCircleOutline
 } from '@material-ui/icons';
 import {
-	BrowserRouter as Router,
-	Switch,
-	Route
+    BrowserRouter as Router,
+    Switch,
+    Route
     } from 'react-router-dom'; 
+import TabPanel from '../Componentes_Genericos/TabPanel';
+import a11yProps from '../Componentes_Genericos/a11yProps';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 export default function SimpleTabs() {
   

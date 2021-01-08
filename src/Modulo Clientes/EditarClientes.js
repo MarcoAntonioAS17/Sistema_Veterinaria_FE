@@ -66,7 +66,6 @@ export default function EditarClientes(props) {
 			(response) => {
                 
 				if (response.data.status === "Success") {
-                    console.log("Guardado con exito");
                     setCorreo("");
                     setNombre("");
                     setTelefono("");

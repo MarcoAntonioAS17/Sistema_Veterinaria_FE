@@ -1,14 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import FormCitas from "./Formulario_Citas";
 import Editar_Citas from "./Editar_Citas";
 import Tabla_Citas from './Tabla_Citas';
+import TabPanel from '../Componentes_Genericos/TabPanel';
 
 import {
     AppBar,
     Tabs,
     Tab,
-    Box,
     Grid
 }from '@material-ui/core'
 import{
@@ -20,39 +19,8 @@ import {
 	Switch,
 	Route
     } from 'react-router-dom'; 
+import a11yProps from '../Componentes_Genericos/a11yProps';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 export default function SimpleTabs() {
   

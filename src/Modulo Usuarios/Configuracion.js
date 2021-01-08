@@ -1,6 +1,4 @@
 import React from 'react';
-import FormProveedores from './Formulario_Proveedores';
-import Tabla_Proveedores from './Table_Proveedores';
 import {
     AppBar,
     Tabs,
@@ -8,17 +6,21 @@ import {
     Grid
 }from '@material-ui/core'
 import{
-    Add,
-    BusinessCenter
+    People,
+    PersonAdd,
+    Settings
 } from '@material-ui/icons';
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route
-    } from 'react-router-dom'; 
-import EditarProveedores from './EditarProveedores';
+    } from 'react-router-dom';
 import TabPanel from '../Componentes_Genericos/TabPanel';
 import a11yProps from '../Componentes_Genericos/a11yProps';
+import FormularioUsuario from './Formulario_Usuario';
+import TablaUsuarios from './Tabla_Usuarios';
+import EditarUsuarios from './Editar_Usuario';
+
 
 export default function SimpleTabs() {
   
@@ -38,21 +40,23 @@ export default function SimpleTabs() {
                     aria-label="simple tabs example"
                     centered>
                     
-                    <Tab label="Proveedores" icon= {<BusinessCenter/>} {...a11yProps(0)} />
-                    <Tab label="Nuevo Proveedor" icon= {<Add/>} {...a11yProps(1)} />
+                    <Tab label="Configuración" icon= {<Settings/>} {...a11yProps(0)} />
+                    <Tab label="Usuarios" icon= {<People/>} {...a11yProps(1)} />
+                    <Tab label="Nuevo Usuario" icon= {<PersonAdd/>} {...a11yProps(2)} />
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
 
-                <Switch>
-                    <Route exact path='/Proveedores/Editar/:id' component = {EditarProveedores} />
-                    <Route path='/'  component = {Tabla_Proveedores}/>
-                </Switch>
             
             </TabPanel>
             <TabPanel value={value} index={1}>
-
-                <FormProveedores/>
+                <Switch>
+                    <Route exact path='/Usuarios/Editar/:id'  component={EditarUsuarios}/>
+                    <Route path='/' component={TablaUsuarios} />
+                </Switch>
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+                <FormularioUsuario/>
 
             </TabPanel>
         </Grid>

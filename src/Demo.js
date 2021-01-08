@@ -5,6 +5,7 @@ import Mascotas from './Modulo Mascotas/Mascotas';
 import Inventario from './Modulo Inventario/Inventario';
 import Proveedores from './Modulo Proveedores/Proveedores'
 import Citas from "./Modulo Citas/Citas";
+import Configuracion from "./Modulo Usuarios/Configuracion";
 
 import NavBar from './NavBar';
 import MenuDrawer from './MenuDrawer';
@@ -67,6 +68,7 @@ export default function MiniDrawer() {
                         <Route path = '/Inventario'  component={Inventario}/>
                         <Route path = '/Proveedores'  component={Proveedores}/>
                         <Route path = '/Compras' />
+                        <Route path = '/Configuracion' component={Configuracion} />
                     </Switch>
                 </Box>
             </main>

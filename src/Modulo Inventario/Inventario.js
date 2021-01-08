@@ -1,16 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import FormCategorias from '../Modulo Categorias/Formulario_Categorias';
 import TablaCategorias from '../Modulo Categorias/Tabla_Categorias';
 import FormProductos from './Formulario_Productos';
 import TablaInventario from './Tabla_Inventario';
 import EditarInventario from './Editar_Inventario';
+import TabPanel from '../Componentes_Genericos/TabPanel';
 
 import {
     AppBar,
     Tabs,
     Tab,
-    Box,
     Grid
 }from '@material-ui/core'
 import{
@@ -24,39 +23,7 @@ import {
 	Switch,
 	Route
     } from 'react-router-dom'; 
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
+import a11yProps from '../Componentes_Genericos/a11yProps';
 
 export default function SimpleTabs() {
   
