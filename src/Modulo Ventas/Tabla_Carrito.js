@@ -22,29 +22,38 @@ export default function TablaCarrito(props) {
   const classes = useStyles();
   const [rows] = React.useState(props.datos);
 
+  function cargar_total (){
+    var sum = 0;
+    rows.forEach(function (item){
+      sum = sum + (item.precio*item.cantidad);
+    });
+    return sum;
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Código</TableCell>
-            <TableCell align="right">Nombre</TableCell>
-            <TableCell align="right">Cantidad</TableCell>
-            <TableCell align="right">Precio Unitario</TableCell>
-            <TableCell align="right">Precio Total</TableCell>
+            <TableCell >Código</TableCell>
+            <TableCell >Nombre</TableCell>
+            <TableCell >Cantidad</TableCell>
+            <TableCell >Precio Unitario</TableCell>
+            <TableCell >Precio Total</TableCell>
             <TableCell ></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
+            
             <TableRow key={index}>
               <TableCell component="th" scope="row">
                 {row.codigo_producto}
               </TableCell>
-              <TableCell align="right">{row.nombre_producto}</TableCell>
-              <TableCell align="right">{row.cantidad}</TableCell>
-              <TableCell align="right">{row.precio}</TableCell>
-              <TableCell align="right">{row.cantidad * row.precio}</TableCell>
+              <TableCell >{row.nombre_producto}</TableCell>
+              <TableCell >{row.cantidad}</TableCell>
+              <TableCell >{row.precio}</TableCell>
+              <TableCell >{row.cantidad * row.precio}</TableCell>
               <TableCell>
                 <IconButton color="secondary" edge="end" onClick={() => props.eliminar(index)}>
                         <Delete />
@@ -52,6 +61,16 @@ export default function TablaCarrito(props) {
               </TableCell>
             </TableRow>
           ))}
+            <TableRow>
+              <TableCell />
+              <TableCell />
+              <TableCell />
+              <TableCell />
+              <TableCell >Total</TableCell>
+              <TableCell>
+                $ {cargar_total()}
+              </TableCell>
+            </TableRow>
         </TableBody>
       </Table>
     </TableContainer>

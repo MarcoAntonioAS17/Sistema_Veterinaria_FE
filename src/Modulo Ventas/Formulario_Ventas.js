@@ -18,7 +18,8 @@ import{
     Cancel,
     CalendarToday,
     AccessTime,
-    AddShoppingCart
+    AddShoppingCart,
+    AttachMoney
 } from '@material-ui/icons';
 import TablaCarrito from './Tabla_Carrito';
 
@@ -65,7 +66,7 @@ export default function FormVentas() {
 
     const classes = useStyles();
     const [fecha, setFecha] = useState(date.toISOString().slice(0,10));
-    const [hora, setHora] = useState(date.getHours() + ':' + date.getMinutes());
+    const [hora, setHora] = useState(date.toString().slice(16,21));
     const [rCliente, setRCliente] = useState(1);
     const [clientes, setClientes] = React.useState(null);
     const [opcion, setOpcion] = useState(1);
@@ -75,6 +76,9 @@ export default function FormVentas() {
     const [tipoServicio, setTipoServicio] = useState("Estetica");
     const [precioServicio, setPrecioServicio] = useState(0);
     
+    const [total, setTotal] = useState(0);
+    const [pago, setPago] = useState(0);
+    const [cambio, setCambio] = useState(0);
 
     const [opcProductos, setOpcProductos] = useState(true);
 
@@ -86,6 +90,70 @@ export default function FormVentas() {
 
     const handleGuardarClick = () => {
         
+        if (cambio < 0){
+            setMensaje("¡Pago insuficiente!");
+            setOpenbar(true);
+            setSuccesbar(false);
+            return;
+        }
+
+        var carrito = [];
+        rows.forEach(function (item){
+            if (item.indexPro == null){
+                carrito.push({
+                    "cantidad": parseInt(item.cantidad),
+                    "rProducto" : "",
+                    "rProductoNombre" : item.nombre_producto,
+                    "Precio": parseFloat(item.precio)
+                });
+            }else{
+                carrito.push({
+                    "cantidad": parseInt(item.cantidad),
+                    "rProducto" : item.codigo_producto,
+                    "rProductoNombre" : item.nombre_producto,
+                    "Precio": parseFloat(item.precio)
+                });
+            }
+            
+        });
+        
+        if (carrito.length < 1) {
+            setMensaje("¡Carrito vacío!");
+            setOpenbar(true);
+            setSuccesbar(false);
+            return;
+        }
+
+        axios.post ('http://localhost:50563/api/Ventas',
+		{
+			"rCliente" : rCliente,
+            "fechaHora" : fecha+"T"+hora,
+            "rUsuario" : 1000,
+            "productos" : carrito
+		}).then (
+			(response) => {
+                
+				if (response.data.status === "Success") {                    
+                    
+                    rows.splice(0,rows.length);
+                    setTotal(0);
+                    setCambio(pago - total);
+                    setMensaje("Venta completada");
+                    setOpenbar(true);
+                    setSuccesbar(true);
+				}else{
+                    setMensaje("Venta no guardada");
+                    setOpenbar(true);
+                    setSuccesbar(false);
+                }
+			},
+			(error) => {
+                console.log("Exception " + error);
+                setOpenbar(true);
+                setSuccesbar(false);
+            }
+        );
+
         
     };
 
@@ -98,8 +166,18 @@ export default function FormVentas() {
     };
 
     const handleCancel = () =>{
-        setFecha(new Date());
-        
+
+        rows.forEach(function (item){
+            if (item.indexPro != null){        
+                productos[item.indexPro].cantidad += parseInt(item.cantidad);
+            }
+        });
+        setTotal(0)
+        setCambio(0);
+        rows.splice(0,rows.length);
+        setMensaje("Venta cancelada");
+        setOpenbar(true);
+        setSuccesbar(true);
     }
 
     function handleOpcionChange (value) {
@@ -108,7 +186,6 @@ export default function FormVentas() {
             setOpcProductos(true);
         else
             setOpcProductos(false);
-        console.log(opcProductos);
     }
 
     useEffect(() =>{
@@ -135,7 +212,6 @@ export default function FormVentas() {
                         if (response2.status === 200) {
                             var res2 = response2.data;
                             setProductos(res2);
-                            console.log(res2);
                         }
                     })
                     .catch (function (error) {
@@ -162,14 +238,31 @@ export default function FormVentas() {
     }else{
         
         const handleAgregarProducto = () => {
+            if (cantidad < 1){
+                setMensaje("Asigna una cantidad");
+                setOpenbar(true);
+                setSuccesbar(false);
+                return;
+            }
+            if (codigo_pro === ""){
+                setMensaje("Escoje un producto");
+                setOpenbar(true);
+                setSuccesbar(false);
+                return;
+            }
             
             if (productos[codigo_pro].cantidad >= cantidad){
                 productos[codigo_pro].cantidad = productos[codigo_pro].cantidad - cantidad;
                 rows.push(createData(productos[codigo_pro].idProductos, productos[codigo_pro].nombre, cantidad, productos[codigo_pro].precioVenta, codigo_pro));
                 
+                
+                setTotal(total + parseFloat(productos[codigo_pro].precioVenta) * parseFloat(cantidad))
+                setCambio(pago - total);
+                
                 setMensaje("Producto agregado");
                 setOpenbar(true);
                 setSuccesbar(true);
+                
             }
             else{
                 setMensaje("Producto insuficiente");
@@ -180,24 +273,42 @@ export default function FormVentas() {
         }
 
         const handleAgregarServicio = () => {
+            if (precioServicio < 1){
+                setMensaje("Asigne una precio");
+                setOpenbar(true);
+                setSuccesbar(false);
+                return;
+            }
             rows.push(createData("100",tipoServicio, 1,precioServicio,null));
+            setTotal(total + parseFloat(precioServicio))
+            setCambio(pago - total);
+            
             setMensaje("Servicio agregado");
             setOpenbar(true);
             setSuccesbar(true);
         }
 
         const handleEliminarItem = (index) => {
-            console.log("Index Padre"+rows[index].indexPro);
+            
             if (rows[index].indexPro){
-                console.log("Producto");
                 productos[rows[index].indexPro].cantidad += parseInt(rows[index].cantidad);
-                
             }
-            console.log(productos);
+            setTotal(total - parseFloat(rows[index].precio)*parseInt(rows[index].cantidad));
+            setCambio(pago - total);
+            
+
             rows.splice(index,1);
             setMensaje("Producto/Servicio eliminado del carrito");
             setOpenbar(true);
             setSuccesbar(true);
+        }
+
+        const handleCambio = (event) => {
+            setPago(event.target.value);
+            if (event.target.value === "")
+                setCambio(0 - parseFloat(total));
+            else
+                setCambio(parseFloat(event.target.value) - parseFloat(total));
         }
 
         const opcClientes = clientes.map((elem) => 
@@ -302,7 +413,7 @@ export default function FormVentas() {
                             variant="outlined"
                             value = {cantidad}
                             onChange = {event => setCantidad(event.target.value)}
-                        />
+                        />                        
 
                         <Button
                             className={classes.input33}
@@ -354,38 +465,82 @@ export default function FormVentas() {
                         </Button>
                     </div>
                     )}
+                    { rows.length > 0? (
+                        <div><Typography variant="h4" align="center">Carrito</Typography>
+                        <TablaCarrito
+                            datos = {rows}
+                            eliminar = {handleEliminarItem}
+                            total = {total}
+                        />
+                        <div className = {classes.buttonContainer}>
+                        <TextField
+                            id="Venta_Pago"
+                            label="Pago"
+                            className = {classes.input50}
+                            style={{ margin: 8 }}
+                            margin="normal"
+                            required = {true}
+                            variant="outlined"
+                            value = {pago}
+                            type = "number"
+                            onChange = {handleCambio}
+                            InputProps={{
+                                startAdornment: (
+                                <InputAdornment position="start">
+                                    <AttachMoney />
+                                </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <TextField
+                            id="Venta_Cambio"
+                            label="Cambio"
+                            className = {classes.input50}
+                            style={{ margin: 8 }}
+                            margin="normal"
+                            variant="outlined"
+                            value = {cambio}
+                            onChange = {handleCambio}
+                            type = "numbre"
+                            disabled = {true}
+                            InputProps={{
+                                startAdornment: (
+                                <InputAdornment position="start">
+                                    <AttachMoney />
+                                </InputAdornment>
+                                ),
+                            }}
+                        />
+                        </div>
 
-                    <Typography variant="h4" align="center">Carrito</Typography>
-                    <TablaCarrito
-                        datos = {rows}
-                        eliminar = {handleEliminarItem}
-                    />
-
-                    <div className = {classes.buttonContainer}>
-                    <Button
-                        className = {classes.button}
-                        variant="contained"
-                        color="primary"
-                        startIcon = {<Save/>}
-                        onClick = {handleGuardarClick}
-                    >
-                        Finalizar venta
-                    </Button>
-                    <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {mensaje}
-                        </Alert>
-                    </Snackbar>
-                    <Button
-                        className = {classes.button}
-                        variant="contained"
-                        color="secondary"
-                        onClick = {handleCancel}
-                        startIcon={<Cancel />}
-                    >
-                        Cancelar
-                    </Button>
-                    </div>
+                        <div className = {classes.buttonContainer}>
+                        <Button
+                            className = {classes.button}
+                            variant="contained"
+                            color="primary"
+                            startIcon = {<Save/>}
+                            onClick = {handleGuardarClick}
+                        >
+                            Finalizar venta
+                        </Button>
+                        <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
+                            <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                                {mensaje}
+                            </Alert>
+                        </Snackbar>
+                        <Button
+                            className = {classes.button}
+                            variant="contained"
+                            color="secondary"
+                            onClick = {handleCancel}
+                            startIcon={<Cancel />}
+                        >
+                            Cancelar
+                        </Button>
+                        </div>
+                        </div>
+                    ):null}
+                    
                 </form>
                 
             </React.Fragment>

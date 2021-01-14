@@ -11,10 +11,14 @@ import{
   AddShoppingCart
 } from '@material-ui/icons';
 import {
-	BrowserRouter as Router
+    BrowserRouter as Router,
+    Switch,
+	Route
     } from 'react-router-dom'; 
 import a11yProps from '../Componentes_Genericos/a11yProps';
 import FormVentas from './Formulario_Ventas';
+import TablaVentas from './Tabla_Ventas';
+import TablaDVentas from './Tabla_DetalleVentas';
 
 export default function SimpleTabs() {
   
@@ -41,6 +45,10 @@ export default function SimpleTabs() {
                 <FormVentas/>
             </TabPanel>
             <TabPanel value={value} index={1}>
+                <Switch>
+                    <Route exact path='/Ventas/:id' component = {TablaDVentas} />
+                    <Route path='/'  component = {TablaVentas}/>
+                </Switch>
                 
             </TabPanel>
             
