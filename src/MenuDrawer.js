@@ -93,67 +93,66 @@ export default function MenuDrawer(props) {
                 <div className={classes.toolbar}/>
                 <Divider />
                 <List>
-                    <ListItem button key="Ventas">
-                        <Link to={"/Ventas"} className = {classes.enlace} >
+                    <Link to={"/Ventas"} className = {classes.enlace} >
+                        <ListItem button key="Ventas">                        
                             <ListItemIcon> <AttachMoney/></ListItemIcon>
                             <ListItemText primary="Ventas"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Citas">
-                        <Link to={"/Citas"} className = {classes.enlace} >
-                        
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Citas"} className = {classes.enlace} >
+                        <ListItem button key="Citas">
                             <ListItemIcon> <Event/></ListItemIcon>
                             <ListItemText primary="Citas"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Clientes">
-                        <Link to={"/Clientes"} className = {classes.enlace} >
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Clientes"} className = {classes.enlace} >
+                        <ListItem button key="Clientes">
                             <ListItemIcon> <Contacts/></ListItemIcon>
                             <ListItemText primary="Clientes"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Mascotas">
-                        <Link to={"/Mascotas"} className = {classes.enlace} >
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Mascotas"} className = {classes.enlace} >
+                        <ListItem button key="Mascotas">
                             <ListItemIcon> <Pets/></ListItemIcon>
                             <ListItemText primary="Mascotas"/>
-                        </Link>
-                    </ListItem>
+                        </ListItem>
+                    </Link>
                 </List>
                 <Divider />
                 <List>
-                    <ListItem button key="Proveedores">
-                        <Link to={"/Proveedores"} className = {classes.enlace} >
+                    <Link to={"/Proveedores"} className = {classes.enlace} >
+                        <ListItem button key="Proveedores">
                             <ListItemIcon> <Store/></ListItemIcon>
                             <ListItemText primary="Proveedores"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Compras">
-                        <Link to={"/Compras"} className = {classes.enlace} >
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Compras"} className = {classes.enlace} >
+                        <ListItem button key="Compras">
                             <ListItemIcon> <Shop/></ListItemIcon>
                             <ListItemText primary="Compras"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Inventario">
-                        <Link to={"/Inventario"} className = {classes.enlace} >
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Inventario"} className = {classes.enlace} >
+                        <ListItem button key="Inventario">
                             <ListItemIcon> <Storefront/></ListItemIcon>
                             <ListItemText primary="Inventario"/>
-                        </Link>
-                    </ListItem>
+                        </ListItem>
+                    </Link>
                 </List>
                 <Divider />
                 <List>
-                    <ListItem button key="Configuración">
-                        <Link to={"/Configuracion"} className = {classes.enlace} >
+                    <Link to={"/Configuracion"} className = {classes.enlace} >
+                        <ListItem button key="Configuración">
                             <ListItemIcon> <Settings/></ListItemIcon>
                             <ListItemText primary="Configuración"/>
-                        </Link>
-                    </ListItem>
-                    <ListItem button key="Salir">
-                        <Link to={"/Login"} className = {classes.enlace} >
+                        </ListItem>
+                    </Link>
+                    <Link to={"/Login"} className = {classes.enlace} >
+                        <ListItem button key="Salir">
                             <ListItemIcon> <ExitToApp/></ListItemIcon>
                             <ListItemText primary="Salir"/>
-                        </Link>
-                    </ListItem>
+                        </ListItem>
+                    </Link>
                 </List>
             </Drawer>
         </React.Fragment>

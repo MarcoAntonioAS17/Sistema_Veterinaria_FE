@@ -17,8 +17,9 @@ import { Box } from '@material-ui/core';
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route
+	Route,
     } from 'react-router-dom'; 
+import Inicio from './Modulo Inicio/Inicio';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,6 +65,7 @@ export default function MiniDrawer() {
                     mt="1rem"
                 >
                     <Switch>
+                        <Route path = '/' component={Inicio} />
                         <Route path = '/Citas'  component={Citas}/>
                         <Route path = '/Clientes'  component={Cliente}/>
                         <Route path = '/Mascotas'  component={Mascotas}/>

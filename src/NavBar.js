@@ -5,10 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { 
     AppBar, 
     IconButton, 
-    Toolbar, 
-    Typography
+    Toolbar
 } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
+import {Link} from 'react-router-dom'; 
+import Logo from './Imgs/Logo-Extend-Extend.png';
 
 const myStyles = makeStyles((theme) => ({
     appBar: {
@@ -22,6 +23,9 @@ const myStyles = makeStyles((theme) => ({
     menuButton: {
         marginRight: 36,
     },
+    link: {
+        textDecoration: "none",
+    }
 }));
 
 export default function NavBar(props){
@@ -44,9 +48,9 @@ export default function NavBar(props){
                     >
                         <MenuIcon/>
                     </IconButton>
-                    <Typography variant="h6" noWrap>
-                        Sistema Integral Veterinario
-                    </Typography>
+                    <Link to="/" className={classes.link}>
+                        <img src={Logo} alt="Logo" height="50px"/> 
+                    </Link>
                 </Toolbar>
 
             </AppBar>
