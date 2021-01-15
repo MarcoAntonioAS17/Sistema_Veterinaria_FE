@@ -7,6 +7,7 @@ import Proveedores from './Modulo Proveedores/Proveedores'
 import Citas from "./Modulo Citas/Citas";
 import Configuracion from "./Modulo Usuarios/Configuracion";
 import Ventas from "./Modulo Ventas/Ventas";
+import Compras from './Modulo Compras/Compras';
 
 import NavBar from './NavBar';
 import MenuDrawer from './MenuDrawer';
@@ -68,7 +69,7 @@ export default function MiniDrawer() {
                         <Route path = '/Mascotas'  component={Mascotas}/>
                         <Route path = '/Inventario'  component={Inventario}/>
                         <Route path = '/Proveedores'  component={Proveedores}/>
-                        <Route path = '/Compras' />
+                        <Route path = '/Compras' component={Compras} />
                         <Route path = '/Ventas' component={Ventas} />
                         <Route path = '/Configuracion' component={Configuracion} />
                     </Switch>

@@ -18,8 +18,7 @@ import{
     Cancel,
     CalendarToday,
     AccessTime,
-    AddShoppingCart,
-    AttachMoney
+    AddShoppingCart
 } from '@material-ui/icons';
 import TablaCarrito from '../Componentes_Genericos/Tabla_Carrito';
 
@@ -56,32 +55,25 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function createData(codigo_producto, nombre_producto, cantidad, precio, indexPro) {
-    return { codigo_producto, nombre_producto, cantidad, precio, indexPro};
+function createData(codigo_producto, nombre_producto, cantidad, precio) {
+    return { codigo_producto, nombre_producto, cantidad, precio};
 }
   
 var date = new Date();
 
-export default function FormVentas() {
+export default function FormCompras() {
 
     const classes = useStyles();
     const [fecha, setFecha] = useState(date.toISOString().slice(0,10));
     const [hora, setHora] = useState(date.toString().slice(16,21));
-    const [rCliente, setRCliente] = useState(1);
-    const [clientes, setClientes] = React.useState(null);
-    const [opcion, setOpcion] = useState(1);
+    const [rProveedor, setRProveedor] = useState(1);
+    const [proveedores, setProveedores] = React.useState(null);
     const [codigo_pro, setCodigo_pro] = useState("");
     const [productos, setProductos] = useState(null);
+    const [product_selec, setProduc_selec] = useState([]);
     const [cantidad, setCantidad] = useState(0);
-    const [tipoServicio, setTipoServicio] = useState("Estetica");
-    const [precioServicio, setPrecioServicio] = useState(0);
+    const [prov_active, setProv_active] = useState(true);
     
-    const [total, setTotal] = useState(0);
-    const [pago, setPago] = useState(0);
-    const [cambio, setCambio] = useState(0);
-
-    const [opcProductos, setOpcProductos] = useState(true);
-
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
     const [mensaje, setMensaje] = useState(" ");
@@ -89,31 +81,14 @@ export default function FormVentas() {
     const [rows] = useState([]);
 
     const handleGuardarClick = () => {
-        
-        if (cambio < 0){
-            setMensaje("¡Pago insuficiente!");
-            setOpenbar(true);
-            setSuccesbar(false);
-            return;
-        }
 
         var carrito = [];
         rows.forEach(function (item){
-            if (item.indexPro == null){
-                carrito.push({
-                    "cantidad": parseInt(item.cantidad),
-                    "rProducto" : "",
-                    "rProductoNombre" : item.nombre_producto,
-                    "Precio": parseFloat(item.precio)
-                });
-            }else{
-                carrito.push({
-                    "cantidad": parseInt(item.cantidad),
-                    "rProducto" : item.codigo_producto,
-                    "rProductoNombre" : item.nombre_producto,
-                    "Precio": parseFloat(item.precio)
-                });
-            }
+            
+            carrito.push({
+                "cantidad": parseInt(item.cantidad),
+                "rProducto" : item.codigo_producto,
+            });
             
         });
         
@@ -124,23 +99,21 @@ export default function FormVentas() {
             return;
         }
 
-        axios.post ('http://localhost:50563/api/Ventas',
+        axios.post ('http://localhost:50563/api/Compras',
 		{
-			"rCliente" : rCliente,
+			"rProveedor" : rProveedor,
             "fechaHora" : fecha+"T"+hora,
             "rUsuario" : 1000,
             "productos" : carrito
 		}).then (
 			(response) => {
                 
-				if (response.data.status === "Success") {                    
-                    
-                    rows.splice(0,rows.length);
-                    setTotal(0);
-                    setCambio(pago - total);
+				if (response.data.status === "Success") {
                     setMensaje("Venta completada");
                     setOpenbar(true);
                     setSuccesbar(true);
+                    setProv_active(true);
+                    rows.splice(0,rows.length);
 				}else{
                     setMensaje("Venta no guardada");
                     setOpenbar(true);
@@ -166,33 +139,19 @@ export default function FormVentas() {
     };
 
     const handleCancel = () =>{
+        setProv_active(true);
 
-        rows.forEach(function (item){
-            if (item.indexPro != null){        
-                productos[item.indexPro].cantidad += parseInt(item.cantidad);
-            }
-        });
-        setTotal(0)
-        setCambio(0);
-        rows.splice(0,rows.length);
-        setMensaje("Venta cancelada");
+        setMensaje("Compra cancelada");
         setOpenbar(true);
         setSuccesbar(true);
-    }
-
-    function handleOpcionChange (value) {
-        setOpcion(value);
-        if (value < 2)
-            setOpcProductos(true);
-        else
-            setOpcProductos(false);
+        rows.splice(0,rows.length);
     }
 
     useEffect(() =>{
 
         const ac = new AbortController();
         Promise.all([
-            axios.get("http://localhost:50563/api/Clientes",{
+            axios.get("http://localhost:50563/api/Proveedores",{
             signal: ac.signal,
             method: 'GET',
             mode: 'cors'
@@ -200,8 +159,7 @@ export default function FormVentas() {
             .then (response => {
                 if (response.status === 200) {
                     var res = response.data;
-                    setClientes(res);
-                    setRCliente(res[0].idClientes)
+                    setProveedores(res);
                     
                     axios.get("http://localhost:50563/api/Productos",{
                     signal: ac.signal,
@@ -227,7 +185,22 @@ export default function FormVentas() {
             return () => ac.abort();
     },[]);
 
-    if (clientes == null || productos == null) {
+    const handleProveedorChange = (event) =>{
+        
+        setRProveedor(event.target.value)
+        console.log("Proveedor id=>"+event.target.value);
+        setProduc_selec([]);
+        var productos_select = [];
+        productos.forEach(function (item){
+            if (item.rProveedor === event.target.value)
+                productos_select.push(item);
+        });
+        if (productos_select.length > 0)
+            setProduc_selec(productos_select);
+
+    };
+
+    if (proveedores == null || productos == null) {
         return(
             <React.Fragment>
                 <div className = {classes.buttonContainer}>
@@ -251,71 +224,29 @@ export default function FormVentas() {
                 return;
             }
             
-            if (productos[codigo_pro].cantidad >= cantidad){
-                productos[codigo_pro].cantidad = productos[codigo_pro].cantidad - cantidad;
-                rows.push(createData(productos[codigo_pro].idProductos, productos[codigo_pro].nombre, cantidad, productos[codigo_pro].precioVenta, codigo_pro));
-                
-                
-                setTotal(total + parseFloat(productos[codigo_pro].precioVenta) * parseFloat(cantidad))
-                setCambio(pago - total);
-                
-                setMensaje("Producto agregado");
-                setOpenbar(true);
-                setSuccesbar(true);
-                
-            }
-            else{
-                setMensaje("Producto insuficiente");
-                setOpenbar(true);
-                setSuccesbar(false);
-            }
-            
-        }
-
-        const handleAgregarServicio = () => {
-            if (precioServicio < 1){
-                setMensaje("Asigne una precio");
-                setOpenbar(true);
-                setSuccesbar(false);
-                return;
-            }
-            rows.push(createData("100",tipoServicio, 1,precioServicio,null));
-            setTotal(total + parseFloat(precioServicio))
-            setCambio(pago - total);
-            
-            setMensaje("Servicio agregado");
+            rows.push(createData(productos[codigo_pro].idProductos, productos[codigo_pro].nombre, cantidad, productos[codigo_pro].precioCompra));
+            setProv_active(false);
+            setMensaje("Producto agregado");
             setOpenbar(true);
             setSuccesbar(true);
+            
         }
 
         const handleEliminarItem = (index) => {
             
-            if (rows[index].indexPro){
-                productos[rows[index].indexPro].cantidad += parseInt(rows[index].cantidad);
-            }
-            setTotal(total - parseFloat(rows[index].precio)*parseInt(rows[index].cantidad));
-            setCambio(pago - total);
-            
-
             rows.splice(index,1);
+            if (rows.length < 1)
+                setProv_active(true);
             setMensaje("Producto/Servicio eliminado del carrito");
             setOpenbar(true);
             setSuccesbar(true);
         }
 
-        const handleCambio = (event) => {
-            setPago(event.target.value);
-            if (event.target.value === "")
-                setCambio(0 - parseFloat(total));
-            else
-                setCambio(parseFloat(event.target.value) - parseFloat(total));
-        }
-
-        const opcClientes = clientes.map((elem) => 
-            <MenuItem key={elem.idClientes} value={elem.idClientes}>{elem.nombre}</MenuItem>
+        const opcProveedores = proveedores.map((elem) => 
+            <MenuItem key={elem.idProveedores} value={elem.idProveedores}>{elem.proveedorNombre}</MenuItem>
         );
         
-        const menuProductos = productos.map((elem, index) =>
+        const menuProductos = product_selec.map((elem, index) =>
             <MenuItem key={elem.idProductos} value={index}>{elem.nombre}</MenuItem>
         );
 
@@ -364,31 +295,18 @@ export default function FormVentas() {
                     </div>
 
                     <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
-                        <InputLabel className={classes.label} id="demo-simple-select-label">Cliente</InputLabel>
+                        <InputLabel className={classes.label} id="demo-simple-select-label" >Proveedor</InputLabel>
                         <Select
+                            disabled={!prov_active}
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value = {rCliente}
-                            onChange={event => setRCliente(event.target.value)}
+                            value = {rProveedor}
+                            onChange={handleProveedorChange}
                         >
-                            {opcClientes}
+                            {opcProveedores}
                         </Select>
                     </FormControl>
 
-                    <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
-                        <InputLabel className={classes.label} id="demo-simple-select-label">Opción</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value = {opcion}
-                            onChange={event => handleOpcionChange(event.target.value)}
-                        >
-                            <MenuItem value="1">Producto</MenuItem>
-                            <MenuItem value="2">Servicio</MenuItem>
-                        </Select>
-                    </FormControl>
-                    
-                    { opcProductos? (
                     <div className = {classes.buttonContainer}  >
                         <FormControl variant="outlined"  className={classes.input33} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Código del producto</InputLabel>
@@ -425,94 +343,13 @@ export default function FormVentas() {
                             Agregar
                         </Button>
                     </div>
-                    ):(
-                    <div className = {classes.buttonContainer}>
-                        <FormControl variant="outlined"  className={classes.input33} >
-                            <InputLabel className={classes.label} id="demo-simple-select-label">Tipo de servicio</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value = {tipoServicio}
-                                onChange={event => setTipoServicio(event.target.value)}
-                            >
-                                <MenuItem value="Estetica">Estética</MenuItem>
-                                <MenuItem value="Consulta">Consulta</MenuItem>
-                                <MenuItem value="Operacion">Operación</MenuItem>
-                            </Select>
-                        </FormControl>
-                                        
-                        <TextField
-                            id="Precio_Servicio"
-                            label="Precio"
-                            className={classes.input33}
-                            style={{ margin: 8 }}
-                            margin="normal"
-                            required = {true}
-                            type = "number"
-                            variant="outlined"
-                            value = {precioServicio}
-                            onChange = {event => setPrecioServicio(event.target.value)}
-                        />
-
-                        <Button
-                            className={classes.input33}
-                            variant="contained"
-                            color="primary"
-                            onClick = {handleAgregarServicio}
-                            startIcon = {<AddShoppingCart/>}
-                        >
-                            Agregar
-                        </Button>
-                    </div>
-                    )}
                     { rows.length > 0? (
                         <div><Typography variant="h4" align="center">Carrito</Typography>
                         <TablaCarrito
                             datos = {rows}
                             eliminar = {handleEliminarItem}
-                            total = {total}
                         />
-                        <div className = {classes.buttonContainer}>
-                        <TextField
-                            id="Venta_Pago"
-                            label="Pago"
-                            className = {classes.input50}
-                            style={{ margin: 8 }}
-                            margin="normal"
-                            required = {true}
-                            variant="outlined"
-                            value = {pago}
-                            type = "number"
-                            onChange = {handleCambio}
-                            InputProps={{
-                                startAdornment: (
-                                <InputAdornment position="start">
-                                    <AttachMoney />
-                                </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <TextField
-                            id="Venta_Cambio"
-                            label="Cambio"
-                            className = {classes.input50}
-                            style={{ margin: 8 }}
-                            margin="normal"
-                            variant="outlined"
-                            value = {cambio}
-                            onChange = {handleCambio}
-                            type = "numbre"
-                            disabled = {true}
-                            InputProps={{
-                                startAdornment: (
-                                <InputAdornment position="start">
-                                    <AttachMoney />
-                                </InputAdornment>
-                                ),
-                            }}
-                        />
-                        </div>
-
+                        
                         <div className = {classes.buttonContainer}>
                         <Button
                             className = {classes.button}
