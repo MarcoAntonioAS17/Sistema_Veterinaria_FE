@@ -65,7 +65,7 @@ export default function MiniDrawer() {
                     mt="1rem"
                 >
                     <Switch>
-                        <Route path = '/' component={Inicio} />
+                        <Route exact path = '/' component={Inicio} />
                         <Route path = '/Citas'  component={Citas}/>
                         <Route path = '/Clientes'  component={Cliente}/>
                         <Route path = '/Mascotas'  component={Mascotas}/>

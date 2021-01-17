@@ -239,6 +239,7 @@ export default function Editar_Citas(props) {
             const opcMascota = mascotas.map((elem) => 
                 <MenuItem key={elem.idMascotas} value={elem.idMascotas}>{elem.nombre}</MenuItem>
             );
+            
             return(
                 <React.Fragment>
                     <form>

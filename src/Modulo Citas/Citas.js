@@ -21,7 +21,7 @@ import {
     } from 'react-router-dom'; 
 import a11yProps from '../Componentes_Genericos/a11yProps';
 
-
+    
 export default function SimpleTabs() {
   
   const [value, setValue] = React.useState(0);
