@@ -10,6 +10,8 @@ import{
     }from '@material-ui/core';
 import {
     Link,
+    Redirect,
+    useHistory
         } from 'react-router-dom'; 
 import Agenda from './Agenda';
 import IcoProducto from '../Imgs/producto-icono.png';
@@ -54,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Inicio() {
   const classes = useStyles();
 
+  let history = useHistory();
   const Token = localStorage.getItem('ACCESS_TOKEN');
   const [dataInicio, setDataInicio] = useState();
   const [fectched, setFectched] = useState(false);
@@ -89,7 +92,17 @@ export default function Inicio() {
         return () => ac.abort();
   },[Token]);
 
-  
+  if(!Token){
+    history.push("/Login");
+    window.location.reload();
+    return(
+        <Redirect push to={{
+            pathname: "/Login",
+            state: { from: history.location }
+        }}/>
+    );
+
+  }
   if (error) {
     return(
         <React.Fragment>

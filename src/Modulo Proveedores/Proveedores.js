@@ -14,20 +14,35 @@ import{
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route
+    Route,
+    Redirect,
+    useHistory
     } from 'react-router-dom'; 
 import EditarProveedores from './EditarProveedores';
 import TabPanel from '../Componentes_Genericos/TabPanel';
 import a11yProps from '../Componentes_Genericos/a11yProps';
 
 export default function SimpleTabs() {
-  
+    
+    let history = useHistory();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  if(!Token){
+    history.push("/Login");
+    window.location.reload();
+    return(
+        <Redirect push to={{
+            pathname: "/Login",
+            state: { from: history.location }
+        }}/>
+    );
+
+  }else
   return (
     <Router>
         <Grid item={true} lg={12}>

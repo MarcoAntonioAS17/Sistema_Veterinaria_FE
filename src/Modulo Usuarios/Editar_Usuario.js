@@ -86,7 +86,6 @@ export default function EditarUsuarios(props) {
 			(response) => {
                 
 				if (response.data.status === "Success") {
-                    console.log("Guardado con exito");
                     
                     setOpenbar(true);
                     setSuccesbar(true);
@@ -116,7 +115,7 @@ export default function EditarUsuarios(props) {
 		})
 		.then (response => {
 			if (response.status === 200) {
-                console.log(response);
+                
                 setUserName(response.data.userName);
                 setNivel(response.data.nivel);
 			}

@@ -13,23 +13,38 @@ import{
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route
+    Route,
+    Redirect,
+    useHistory
     } from 'react-router-dom';
 import TabPanel from '../Componentes_Genericos/TabPanel';
 import a11yProps from '../Componentes_Genericos/a11yProps';
 import FormularioUsuario from './Formulario_Usuario';
 import TablaUsuarios from './Tabla_Usuarios';
 import EditarUsuarios from './Editar_Usuario';
-
+import Config from './Config';
 
 export default function SimpleTabs() {
-  
+    
+    let history = useHistory();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  if(!Token){
+    history.push("/Login");
+    window.location.reload();
+    return(
+        <Redirect push to={{
+            pathname: "/Login",
+            state: { from: history.location }
+        }}/>
+    );
+
+  }else
   return (
     <Router>
         <Grid item={true} lg={12}>
@@ -46,8 +61,7 @@ export default function SimpleTabs() {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-
-            
+                <Config/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <Switch>
@@ -57,7 +71,6 @@ export default function SimpleTabs() {
             </TabPanel>
             <TabPanel value={value} index={2}>
                 <FormularioUsuario/>
-
             </TabPanel>
         </Grid>
     </Router>

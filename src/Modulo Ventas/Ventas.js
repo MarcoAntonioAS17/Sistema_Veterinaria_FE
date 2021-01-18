@@ -13,7 +13,9 @@ import{
 import {
     BrowserRouter as Router,
     Switch,
-	Route
+    Route,
+    Redirect,
+    useHistory
     } from 'react-router-dom'; 
 import a11yProps from '../Componentes_Genericos/a11yProps';
 import FormVentas from './Formulario_Ventas';
@@ -22,12 +24,26 @@ import TablaDVentas from './Tabla_DetalleVentas';
 
 export default function SimpleTabs() {
   
+  let history = useHistory();
+  const Token = localStorage.getItem('ACCESS_TOKEN');
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  
+  if(!Token){
+    history.push("/Login");
+    window.location.reload();
+    return(
+        <Redirect push to={{
+            pathname: "/Login",
+            state: { from: history.location }
+        }}/>
+    );
 
+  }else
   return (
     <Router>
         <Grid item={true} lg={12}>
