@@ -145,6 +145,7 @@ const headCells = [
 export default function EnhancedTable(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
@@ -164,7 +165,13 @@ export default function EnhancedTable(props) {
 
     function delete_clie(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Clientes/" + item.idClientes)
+        axios.delete ("http://localhost:50563/api/Clientes/" + item.idClientes,{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
+            })
             .then(response => {
                 if (response.data.status === "Success") {
                   
@@ -225,9 +232,14 @@ export default function EnhancedTable(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Clientes/",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -245,7 +257,7 @@ export default function EnhancedTable(props) {
             )
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[estado, Token]);
 
     
     if (error) {

@@ -51,6 +51,7 @@ export default function EditarInventario(props) {
 
     const classes = useStyles();
     const [idProductos] = useState(props.match.params.id);
+    const Token = localStorage.getItem('ACCESS_TOKEN');
 
     const [nombre, setNombre] = useState("");
     const [precioVenta, setPrecioVenta] = useState(0.0);
@@ -73,9 +74,14 @@ export default function EditarInventario(props) {
         const ac = new AbortController();
         Promise.all([
             axios.get("http://localhost:50563/api/Categorias",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response => {
                 if (response.status === 200) {
@@ -87,9 +93,14 @@ export default function EditarInventario(props) {
                 console.log(error);
             }),
             axios.get("http://localhost:50563/api/Proveedores",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response2 => {
                 if (response2.status === 200) {
@@ -97,9 +108,14 @@ export default function EditarInventario(props) {
                     setProveedor(res2);
 
                     axios.get("http://localhost:50563/api/Productos/"+idProductos,{
-                    signal: ac.signal,
-                    method: 'GET',
-                    mode: 'cors'
+                        signal: ac.signal,
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json',
+                            'Authorization': 'Bearer ' + Token
+                        }
                     })
                     .then (response3 => {
                         if (response3.status === 200) {
@@ -128,7 +144,7 @@ export default function EditarInventario(props) {
             })
         ]);
             return () => ac.abort();
-    },[idProductos]);
+    },[idProductos, Token]);
 
     const handleActualizar = () => {
         
@@ -142,7 +158,13 @@ export default function EditarInventario(props) {
             "Descripcion" : descripcion,
             "RCategoria" : parseInt(rCategoria),
             "RProveedor" : parseInt(rProveedor)
-		}).then (
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 console.log(response);
 				if (response.data.status === "Success") {

@@ -52,6 +52,7 @@ export default function EditarMascota(props) {
 
     const classes = useStyles();
     const [idMascota] = React.useState(props.match.params.id);
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     
     const [nombre, setNombre] = React.useState("");
     const [edad, setEdad] = React.useState(new Date());
@@ -83,6 +84,11 @@ export default function EditarMascota(props) {
             "descripcion": descrip,
             "rcliente": parseInt(rcliente,10)
         }, {
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		}).then (
 			(response) => {
                 
@@ -114,7 +120,12 @@ export default function EditarMascota(props) {
         axios.get ('http://localhost:50563/api/Mascotas/' + idMascota,
 		{
             method: "GET",
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		})
 		.then (response => {
 			if (response.status === 200) {
@@ -128,7 +139,12 @@ export default function EditarMascota(props) {
                 axios.get ('http://localhost:50563/api/Clientes',
                 {
                     method: "GET",
-                    mode: 'cors'
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json',
+                        'Authorization': 'Bearer ' + Token
+                    }
                 })
                 .then (response2 => {
                     if (response2.status === 200) {
@@ -148,7 +164,7 @@ export default function EditarMascota(props) {
 			console.log(error);
         })
        
-    },[idMascota]);
+    },[idMascota, Token]);
 
     if (clientes == null) {
         return(

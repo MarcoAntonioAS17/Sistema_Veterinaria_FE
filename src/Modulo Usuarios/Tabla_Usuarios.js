@@ -142,11 +142,11 @@ const headCells = [
 export default function EnhancedTable(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     
     const [rows, setRows] = useState({});
     const [error, setError] = useState(null);
     const [isFectched, setisFectched] = useState(false);
-    const [estado] = useState(false);
 
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('idClientes');
@@ -161,7 +161,13 @@ export default function EnhancedTable(props) {
 
     function delete_item(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Usuarios/" + item.idUser)
+        axios.delete ("http://localhost:50563/api/Usuarios/" + item.idUser,{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        })
             .then(response => {
                 if (response.data.status === "Success") {
                   
@@ -218,9 +224,14 @@ export default function EnhancedTable(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Usuarios/",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -238,7 +249,7 @@ export default function EnhancedTable(props) {
             )
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[Token]);
 
     
     if (error) {

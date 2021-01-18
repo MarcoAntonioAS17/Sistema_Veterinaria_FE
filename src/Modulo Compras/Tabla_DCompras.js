@@ -96,6 +96,8 @@ const headCells = [
 export default function TablaDCompras(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [idVentas] = useState(props.match.params.id);
     const [usuario, setUsuario] = useState("");
     const [proveedor, setProveedor] = useState("");
@@ -131,9 +133,14 @@ export default function TablaDCompras(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Compras/"+idVentas,{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -154,7 +161,7 @@ export default function TablaDCompras(props) {
             )
         ]);
             return () => ac.abort();
-    },[idVentas]);
+    },[idVentas, Token]);
 
     function get_total(productos) {
         var sum = 0.00;

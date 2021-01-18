@@ -145,11 +145,11 @@ const headCells = [
 export default function EnhancedTable(props) {
 
     const classes = useStyles();
-    
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
     const [isFectched, setisFectched] = React.useState(false);
-    const [estado] = React.useState(false);
 
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('idProveedores');
@@ -164,7 +164,13 @@ export default function EnhancedTable(props) {
 
     function delete_pro(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Proveedores/" + item.idProveedores)
+        axios.delete ("http://localhost:50563/api/Proveedores/" + item.idProveedores,{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        })
             .then(response => {
                 if (response.data.status === "Success") {
                   
@@ -222,9 +228,14 @@ export default function EnhancedTable(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Proveedores/",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -242,7 +253,7 @@ export default function EnhancedTable(props) {
             )
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[Token]);
 
     
     if (error) {

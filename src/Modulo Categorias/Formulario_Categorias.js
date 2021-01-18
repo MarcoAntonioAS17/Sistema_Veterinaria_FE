@@ -30,6 +30,8 @@ const useStyles = makeStyles(() => ({
 export default function FormMascotas() {
 
     const classes = useStyles();
+
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     const [nombre, setNombre] = React.useState("");
     
     const [openbar, setOpenbar] = React.useState(false);
@@ -38,10 +40,17 @@ export default function FormMascotas() {
     const handleGuardarClick = () => {
         
         axios.post ('http://localhost:50563/api/Categorias/',
-		{
-			"nombre": nombre,
-			
-		}).then (
+            {
+                "nombre": nombre
+            },
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
+            }
+        ).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {

@@ -54,18 +54,26 @@ const useStyles = makeStyles((theme) => ({
 export default function Inicio() {
   const classes = useStyles();
 
+  const Token = localStorage.getItem('ACCESS_TOKEN');
   const [dataInicio, setDataInicio] = useState();
   const [fectched, setFectched] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() =>{
+    
     const ac = new AbortController();
     Promise.all([
       axios.get("http://localhost:50563/api/Inicio",{
-      signal: ac.signal,
-      method: 'GET',
-      mode: 'cors'
-      })
+            signal: ac.signal,
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }
+      )
       .then (response2 => {
         if (response2.status === 200) {
           var res = response2.data;
@@ -79,8 +87,9 @@ export default function Inicio() {
       })
     ]);
         return () => ac.abort();
-  },[]);
+  },[Token]);
 
+  
   if (error) {
     return(
         <React.Fragment>

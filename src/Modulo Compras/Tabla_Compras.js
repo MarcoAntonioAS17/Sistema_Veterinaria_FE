@@ -145,6 +145,7 @@ const headCells = [
 export default function TablaCompras() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
@@ -193,9 +194,14 @@ export default function TablaCompras() {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Compras",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -213,11 +219,17 @@ export default function TablaCompras() {
             )
         ]);
             return () => ac.abort();
-    },[]);
+    },[Token]);
 
     function delete_item(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Compras/" + item.idCompras)
+        axios.delete ("http://localhost:50563/api/Compras/" + item.idCompras,{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
+            })
             .then(response => {
                 if (response.data.status === "Success") {
                   

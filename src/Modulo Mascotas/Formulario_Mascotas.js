@@ -49,6 +49,8 @@ const useStyles = makeStyles((theme) => ({
 export default function FormClientes() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [nombre, setNombre] = React.useState("");
     const [edad, setEdad] = React.useState(new Date());
     const [tipo, setTipo] = React.useState("");
@@ -56,7 +58,6 @@ export default function FormClientes() {
     const [descrip, setDescrip] = React.useState("");
     const [rcliente, setRcliente] = React.useState(0);
     const [clientes, setClientes] = React.useState(null);
-    const [estado] = React.useState(true);
 
     const [openbar, setOpenbar] = React.useState(false);
     const [succesbar, setSuccesbar] = React.useState(false);
@@ -66,9 +67,14 @@ export default function FormClientes() {
         const ac = new AbortController();
         Promise.all([
             axios.get("http://localhost:50563/api/Clientes",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response2 => {
                 if (response2.status === 200) {
@@ -83,10 +89,9 @@ export default function FormClientes() {
             })
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[Token]);
 
     const handleGuardarClick = () => {
-        console.log(edad+"T00:00:00");
         
         axios.post ('http://localhost:50563/api/Mascotas',
 		{
@@ -96,7 +101,13 @@ export default function FormClientes() {
             "raza": raza,
             "descripcion": descrip,
             "rcliente": parseInt(rcliente,10)
-		}).then (
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 console.log(response);
 				if (response.data.status === "Success") {

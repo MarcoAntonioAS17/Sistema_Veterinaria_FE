@@ -65,6 +65,8 @@ var date = new Date();
 export default function FormVentas() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [fecha, setFecha] = useState(date.toISOString().slice(0,10));
     const [hora, setHora] = useState(date.toString().slice(16,21));
     const [rCliente, setRCliente] = useState(1);
@@ -130,7 +132,13 @@ export default function FormVentas() {
             "fechaHora" : fecha+"T"+hora,
             "rUsuario" : 1000,
             "productos" : carrito
-		}).then (
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {                    
@@ -193,9 +201,14 @@ export default function FormVentas() {
         const ac = new AbortController();
         Promise.all([
             axios.get("http://localhost:50563/api/Clientes",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response => {
                 if (response.status === 200) {
@@ -204,9 +217,14 @@ export default function FormVentas() {
                     setRCliente(res[0].idClientes)
                     
                     axios.get("http://localhost:50563/api/Productos",{
-                    signal: ac.signal,
-                    method: 'GET',
-                    mode: 'cors'
+                        signal: ac.signal,
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json',
+                            'Authorization': 'Bearer ' + Token
+                        }
                     })
                     .then (response2 => {
                         if (response2.status === 200) {
@@ -225,7 +243,7 @@ export default function FormVentas() {
             })
         ]);
             return () => ac.abort();
-    },[]);
+    },[Token]);
 
     if (clientes == null || productos == null) {
         return(

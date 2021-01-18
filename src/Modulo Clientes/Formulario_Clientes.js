@@ -35,6 +35,8 @@ const useStyles = makeStyles(() => ({
 export default function FormClientes() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [nombre, setNombre] = React.useState("");
     const [telefono, setTelefono] = React.useState("");
     const [correo, setCorreo] = React.useState("");
@@ -47,7 +49,12 @@ export default function FormClientes() {
 		{
 			"nombre": nombre,
 			"telefono": telefono,
-			"correo": correo,
+            "correo": correo,
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		}).then (
 			(response) => {
                 

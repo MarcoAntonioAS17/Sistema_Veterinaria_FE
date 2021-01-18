@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 export default function FormClientes() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
 
     const [fecha, setFecha] = useState();
     const [hora, setHora] = useState();
@@ -73,7 +74,13 @@ export default function FormClientes() {
             "Tipo" : tipo,
             "RMascota" : parseInt(rmascota),
             "Notas" : notas
-		}).then (
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {
@@ -103,7 +110,12 @@ export default function FormClientes() {
             axios.get("http://localhost:50563/api/Clientes",{
             signal: ac.signal,
             method: 'GET',
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
             })
             .then (response2 => {
                 if (response2.status === 200) {
@@ -117,7 +129,7 @@ export default function FormClientes() {
             })
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[estado, Token]);
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -140,7 +152,12 @@ export default function FormClientes() {
             axios.get("http://localhost:50563/api/Mascotas/Cliente/"+event.target.value,{
             signal: ac.signal,
             method: 'GET',
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
             })
             .then (response2 => {
                 if (response2.status === 200) {

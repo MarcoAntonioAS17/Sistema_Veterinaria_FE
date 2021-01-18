@@ -112,6 +112,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Agenda() {
   const classes = useStyles();
+
+  const Token = localStorage.getItem('ACCESS_TOKEN');
   const [estetica, setEstetica ] = useState(true);
   const [consulta, setConsulta ] = useState(true);
   const [operacion, setOperacion ] = useState(true);
@@ -148,9 +150,14 @@ export default function Agenda() {
     const ac = new AbortController();
     Promise.all([
       axios.get("http://localhost:50563/api/Citas/Inicio",{
-      signal: ac.signal,
-      method: 'GET',
-      mode: 'cors'
+        signal: ac.signal,
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json',
+          'Authorization': 'Bearer ' + Token
+        }
       })
       .then (response2 => {
         if (response2.status === 200) {
@@ -166,7 +173,7 @@ export default function Agenda() {
       })
     ]);
         return () => ac.abort();
-  },[]);
+  },[Token]);
 
   if (error) {
     return(

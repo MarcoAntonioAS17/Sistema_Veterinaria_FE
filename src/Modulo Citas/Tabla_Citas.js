@@ -147,6 +147,7 @@ const headCells = [
 export default function EnhancedTable(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     
     const [rows, setRows] = useState({});
     const [error, setError] = useState(null);
@@ -166,7 +167,13 @@ export default function EnhancedTable(props) {
 
     function delete_cita(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Citas/" + item.idCitas)
+        axios.delete ("http://localhost:50563/api/Citas/" + item.idCitas,{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        })
             .then(response => {
                 if (response.data.status === "Success") {
                   
@@ -224,9 +231,14 @@ export default function EnhancedTable(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Citas/",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -244,7 +256,7 @@ export default function EnhancedTable(props) {
             )
         ]);
             return () => ac.abort();
-    },[estado]);
+    },[estado, Token]);
 
     
     if (error) {

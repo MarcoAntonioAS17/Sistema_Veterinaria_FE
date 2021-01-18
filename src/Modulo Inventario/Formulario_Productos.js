@@ -49,6 +49,8 @@ const useStyles = makeStyles((theme) => ({
 export default function FormInventario() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [idProductos, setIdProductos] = useState("");
     const [nombre, setNombre] = useState("");
     const [precioVenta, setPrecioVenta] = useState(0.0);
@@ -70,9 +72,14 @@ export default function FormInventario() {
         const ac = new AbortController();
         Promise.all([
             axios.get("http://localhost:50563/api/Categorias",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response => {
                 if (response.status === 200) {
@@ -81,9 +88,14 @@ export default function FormInventario() {
                     setRCategoria(res[0].idCategorias)
                     
                     axios.get("http://localhost:50563/api/Proveedores",{
-                    signal: ac.signal,
-                    method: 'GET',
-                    mode: 'cors'
+                        signal: ac.signal,
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json',
+                            'Authorization': 'Bearer ' + Token
+                        }
                     })
                     .then (response2 => {
                         if (response2.status === 200) {
@@ -104,7 +116,7 @@ export default function FormInventario() {
             })
         ]);
             return () => ac.abort();
-    },[]);
+    },[Token]);
 
     const handleGuardarClick = () => {
         
@@ -119,7 +131,13 @@ export default function FormInventario() {
             "Descripcion" : descripcion,
             "RCategoria" : parseInt(rCategoria),
             "RProveedor" : parseInt(rProveedor)
-		}).then (
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 console.log(response);
 				if (response.data.status === "Success") {

@@ -145,7 +145,8 @@ const headCells = [
 export default function TablaVentas() {
 
     const classes = useStyles();
-    
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
     const [isFectched, setisFectched] = React.useState(false);
@@ -193,9 +194,15 @@ export default function TablaVentas() {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Ventas/",{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
+                
             })
             .then(res => res.json())
             .then(
@@ -213,11 +220,17 @@ export default function TablaVentas() {
             )
         ]);
             return () => ac.abort();
-    },[]);
+    },[Token]);
 
     function delete_item(item) {
         handleDialogOpen();
-        axios.delete ("http://localhost:50563/api/Ventas/" + item.idVentas)
+        axios.delete ("http://localhost:50563/api/Ventas/" + item.idVentas,{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        })
             .then(response => {
                 if (response.data.status === "Success") {
                   

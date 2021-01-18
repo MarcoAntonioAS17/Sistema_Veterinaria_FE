@@ -37,6 +37,7 @@ const useStyles = makeStyles(() => ({
 export default function EditarClientes(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     const [idCliente] = React.useState(props.match.params.id);
     
     const [nombre, setNombre] = React.useState("");
@@ -60,8 +61,13 @@ export default function EditarClientes(props) {
         axios.put ('http://localhost:50563/api/Clientes/' + idCliente, {
             "nombre": nombre,
 			"telefono": telefono,
-			"correo": correo,
+            "correo": correo
         }, {
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		}).then (
 			(response) => {
                 
@@ -88,7 +94,12 @@ export default function EditarClientes(props) {
         axios.get ('http://localhost:50563/api/Clientes/' + idCliente,
 		{
             method: "GET",
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		})
 		.then (response => {
 			if (response.status === 200) {
@@ -101,7 +112,7 @@ export default function EditarClientes(props) {
 		.catch (function (error) {
 			console.log(error);
 		})
-    },[idCliente]);
+    },[idCliente,Token]);
 
     return(
         <React.Fragment>

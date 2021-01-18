@@ -48,6 +48,8 @@ const useStyles = makeStyles((theme) => ({
 export default function FormUsuarios() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+
     const [userName, setUserName] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [nivel, setNivel] = React.useState(2);
@@ -61,8 +63,14 @@ export default function FormUsuarios() {
 		{
 			"userName": userName,
 			"password": password,
-			"nivel": parseInt(nivel),
-		}).then (
+            "nivel": parseInt(nivel)
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {

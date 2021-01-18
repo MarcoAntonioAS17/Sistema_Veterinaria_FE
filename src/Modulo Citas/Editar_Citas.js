@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Editar_Citas(props) {
 
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     const classes = useStyles();
     const [idCita] = useState(props.match.params.id);
 
@@ -69,13 +70,21 @@ export default function Editar_Citas(props) {
     const handleActualizarClick = () => {
         
         axios.put ('http://localhost:50563/api/Citas/'+idCita,
-		{
-			"RCliente" : parseInt(rcliente),
-            "FechaHora" : fecha+"T"+hora,
-            "Tipo" : tipo,
-            "RMascota" : parseInt(rmascota),
-            "Notas" : notas
-		}).then (
+		    {
+                "RCliente" : parseInt(rcliente),
+                "FechaHora" : fecha+"T"+hora,
+                "Tipo" : tipo,
+                "RMascota" : parseInt(rmascota),
+                "Notas" : notas,
+            },
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
+            }
+        ).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {
@@ -106,7 +115,12 @@ export default function Editar_Citas(props) {
             {
                 signal: ac.signal,
                 method: 'GET',
-                mode: 'cors'
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response2 => {
                 if (response2.status === 200) {
@@ -133,7 +147,7 @@ export default function Editar_Citas(props) {
                     setFecha([year, month, day].join('-'));
                     setHora([hours, minutes].join(':'));
 
-                    consultar_clientes(res.rCliente, res.rMascota);
+                    consultar_clientes(res.rCliente, res.rMascota, Token);
                     
                 }
             })
@@ -142,16 +156,21 @@ export default function Editar_Citas(props) {
             })
         ]);
             return () => ac.abort();
-    },[idCita]);
+    },[idCita, Token]);
 
-    function consultar_clientes(ref_cliente, ref_Mascota) {
+    function consultar_clientes(ref_cliente, ref_Mascota, token) {
         const ac = new AbortController();
             Promise.all([
                 axios.get("http://localhost:50563/api/Clientes",
                 {
                     signal: ac.signal,
                     method: 'GET',
-                    mode: 'cors'
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }
                 })
                 .then (response2 => {
                     if (response2.status === 200) {
@@ -162,7 +181,12 @@ export default function Editar_Citas(props) {
                         axios.get("http://localhost:50563/api/Mascotas/Cliente/"+ref_cliente,{
                             signal: ac.signal,
                             method: 'GET',
-                            mode: 'cors'
+                            mode: 'cors',
+                             headers: {
+                                'Accept': 'application/json',
+                                'Content-type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            }
                             })
                             .then (response2 => {
                                 if (response2.status === 200) {
@@ -205,9 +229,14 @@ export default function Editar_Citas(props) {
         const ac = new AbortController();
         Promise.all([
             axios.get("http://localhost:50563/api/Mascotas/Cliente/"+event.target.value,{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then (response2 => {
                 if (response2.status === 200) {

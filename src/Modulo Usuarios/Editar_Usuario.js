@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
 export default function EditarUsuarios(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     const [idUser] = useState(props.match.params.id);
 
     const [userName, setUserName] = useState("");
@@ -74,8 +75,14 @@ export default function EditarUsuarios(props) {
 			"userName": userName,
             "password": password,
             "passwordN" : passwordNueva,
-			"nivel": parseInt(nivel),
-		}).then (
+            "nivel": parseInt(nivel)
+		},{
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {
@@ -100,7 +107,12 @@ export default function EditarUsuarios(props) {
         axios.get ('http://localhost:50563/api/Usuarios/' + idUser,
 		{
             method: "GET",
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		})
 		.then (response => {
 			if (response.status === 200) {
@@ -112,7 +124,7 @@ export default function EditarUsuarios(props) {
 		.catch (function (error) {
 			console.log(error);
 		})
-    },[idUser]);
+    },[idUser, Token]);
 
 
     const handleClose = (event, reason) => {

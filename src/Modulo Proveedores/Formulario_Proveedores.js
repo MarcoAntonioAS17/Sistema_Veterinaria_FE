@@ -35,6 +35,8 @@ const useStyles = makeStyles(() => ({
 export default function FormProveedores() {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+    
     const [nombre, setNombre] = React.useState("");
     const [telefono, setTelefono] = React.useState("");
     const [correo, setCorreo] = React.useState("");
@@ -47,8 +49,15 @@ export default function FormProveedores() {
 		{
 			"ProveedorNombre": nombre,
 			"telefono": telefono,
-			"correo": correo,
-		}).then (
+            "correo": correo
+        },
+        {
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
+        }).then (
 			(response) => {
                 
 				if (response.data.status === "Success") {

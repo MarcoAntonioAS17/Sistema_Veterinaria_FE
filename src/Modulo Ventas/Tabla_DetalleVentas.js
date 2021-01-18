@@ -97,6 +97,8 @@ export default function TablaDVentas(props) {
 
     const classes = useStyles();
     const [idVentas] = useState(props.match.params.id);
+    const Token = localStorage.getItem('ACCESS_TOKEN');
+    
     const [usuario, setUsuario] = useState("");
     const [cliente, setCliente] = useState("");
     const [fecha, setFecha] = useState();
@@ -131,9 +133,14 @@ export default function TablaDVentas(props) {
         const ac = new AbortController();
         Promise.all([
             fetch("http://localhost:50563/api/Ventas/"+idVentas,{
-            signal: ac.signal,
-            method: 'GET',
-            mode: 'cors'
+                signal: ac.signal,
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': 'Bearer ' + Token
+                }
             })
             .then(res => res.json())
             .then(
@@ -154,7 +161,7 @@ export default function TablaDVentas(props) {
             )
         ]);
             return () => ac.abort();
-    },[idVentas]);
+    },[idVentas, Token]);
 
     function get_total(productos) {
         var sum = 0.00;

@@ -37,6 +37,7 @@ const useStyles = makeStyles(() => ({
 export default function EditarProveedores(props) {
 
     const classes = useStyles();
+    const Token = localStorage.getItem('ACCESS_TOKEN');
     const [idProveedor] = React.useState(props.match.params.id);
     
     const [nombre, setNombre] = React.useState("");
@@ -62,8 +63,13 @@ export default function EditarProveedores(props) {
         axios.put ('http://localhost:50563/api/Proveedores/' + idProveedor, {
             "proveedorNombre": nombre,
 			"telefono": telefono,
-			"correo": correo,
+            "correo": correo
         }, {
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		}).then (
 			(response) => {
                 
@@ -91,7 +97,12 @@ export default function EditarProveedores(props) {
         axios.get ('http://localhost:50563/api/Proveedores/' + idProveedor,
 		{
             method: "GET",
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+				'Accept': 'application/json',
+				'Content-type': 'application/json',
+				'Authorization': 'Bearer ' + Token
+			}
 		})
 		.then (response => {
 			if (response.status === 200) {
@@ -103,7 +114,7 @@ export default function EditarProveedores(props) {
 		.catch (function (error) {
 			console.log(error);
 		})
-    },[idProveedor]);
+    },[idProveedor, Token]);
 
     return(
         <React.Fragment>
