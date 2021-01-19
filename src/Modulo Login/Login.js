@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import { 
   Avatar,
@@ -91,9 +91,9 @@ export default function SignInSide() {
 			(response) => {
 				if (response.status === 200) {
           const json = response.data;
-          localStorage.setItem("ACCESS_TOKEN", json.token);
-          localStorage.setItem("USER_NAME", json.userName);
-          localStorage.setItem("NIVEL", json.nivel);
+          sessionStorage.setItem("ACCESS_TOKEN", json.token);
+          sessionStorage.setItem("USER_NAME", json.userName);
+          sessionStorage.setItem("NIVEL", json.nivel);
 					history.push("/");
 				}else {
           setBarMensaje("Contraseña o usuario invalido");

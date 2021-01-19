@@ -142,7 +142,7 @@ const headCells = [
 export default function EnhancedTable(props) {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     
     const [rows, setRows] = useState({});
     const [error, setError] = useState(null);

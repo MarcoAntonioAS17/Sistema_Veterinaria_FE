@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 export default function FormClientes() {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [fecha, setFecha] = useState(new Date().toISOString().slice(0,10));
     const [hora, setHora] = useState(new Date().toTimeString().slice(0,5));

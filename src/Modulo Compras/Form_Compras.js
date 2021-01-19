@@ -64,7 +64,7 @@ var date = new Date();
 export default function FormCompras() {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [fecha, setFecha] = useState(date.toISOString().slice(0,10));
     const [hora, setHora] = useState(date.toString().slice(16,21));

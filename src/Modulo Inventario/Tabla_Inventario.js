@@ -149,8 +149,8 @@ const headCells = [
 export default function TablaInventario(props) {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
-    const Nivel = localStorage.getItem('NIVEL');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
+    const Nivel = sessionStorage.getItem('NIVEL');
     
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);

@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 export default function EditarProveedores(props) {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     const [idProveedor] = useState(props.match.params.id);
     
     const [nombre, setNombre] = useState("");

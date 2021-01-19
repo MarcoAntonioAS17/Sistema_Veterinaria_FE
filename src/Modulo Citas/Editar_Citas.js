@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Editar_Citas(props) {
 
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     const classes = useStyles();
     const [idCita] = useState(props.match.params.id);
 

@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 export default function FormUsuarios() {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");

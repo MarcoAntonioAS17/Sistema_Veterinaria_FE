@@ -27,9 +27,9 @@ function Alert(props) {
 export default function Config() {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
-    const Name = localStorage.getItem('USER_NAME');
-    const Nivel = localStorage.getItem('NIVEL');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
+    const Name = sessionStorage.getItem('USER_NAME');
+    const Nivel = sessionStorage.getItem('NIVEL');
     
     const [dias, setDias] = useState(0);
     const [cantidad, setCantidad] = useState(0);

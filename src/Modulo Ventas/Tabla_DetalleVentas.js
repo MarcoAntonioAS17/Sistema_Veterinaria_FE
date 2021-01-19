@@ -97,7 +97,7 @@ export default function TablaDVentas(props) {
 
     const classes = useStyles();
     const [idVentas] = useState(props.match.params.id);
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     
     const [usuario, setUsuario] = useState("");
     const [cliente, setCliente] = useState("");

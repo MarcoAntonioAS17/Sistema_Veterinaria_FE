@@ -26,7 +26,7 @@ export default function SimpleTabs() {
   
   const [value, setValue] = React.useState(0);
   let history = useHistory();
-  const Token = localStorage.getItem('ACCESS_TOKEN');
+  const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

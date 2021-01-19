@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
 export default function EditarClientes(props) {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     const [idCliente] = useState(props.match.params.id);
     
     const [nombre, setNombre] = useState("");

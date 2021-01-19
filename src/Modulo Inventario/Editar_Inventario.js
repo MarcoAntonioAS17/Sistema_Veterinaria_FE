@@ -47,7 +47,7 @@ export default function EditarInventario(props) {
 
     const classes = useStyles();
     const [idProductos] = useState(props.match.params.id);
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [nombre, setNombre] = useState("");
     const [precioVenta, setPrecioVenta] = useState(0.0);

@@ -96,7 +96,7 @@ const headCells = [
 export default function TablaDCompras(props) {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [idVentas] = useState(props.match.params.id);
     const [usuario, setUsuario] = useState("");

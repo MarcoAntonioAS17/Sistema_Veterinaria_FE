@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
 export default function FormClientes() {
 
     const classes = useStyles();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
 
     const [nombre, setNombre] = useState("");
     const [telefono, setTelefono] = useState("");

@@ -75,6 +75,12 @@ export default function MenuDrawer(props) {
     
     const classes = myStyles();
 
+    const handleSalirClik= () => {
+        
+        sessionStorage.clear();
+        window.location.reload();
+    };
+
     return(
         <React.Fragment>
             <Drawer
@@ -147,7 +153,7 @@ export default function MenuDrawer(props) {
                             <ListItemText primary="Configuración"/>
                         </ListItem>
                     </Link>
-                    <Link to={"/Login"} className = {classes.enlace} >
+                    <Link to={"/Login"}  onClick={handleSalirClik} className = {classes.enlace} >
                         <ListItem button key="Salir">
                             <ListItemIcon> <ExitToApp/></ListItemIcon>
                             <ListItemText primary="Salir"/>

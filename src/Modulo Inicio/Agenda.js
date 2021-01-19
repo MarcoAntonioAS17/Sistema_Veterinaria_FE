@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Agenda() {
   const classes = useStyles();
 
-  const Token = localStorage.getItem('ACCESS_TOKEN');
+  const Token = sessionStorage.getItem('ACCESS_TOKEN');
   const [estetica, setEstetica ] = useState(true);
   const [consulta, setConsulta ] = useState(true);
   const [operacion, setOperacion ] = useState(true);

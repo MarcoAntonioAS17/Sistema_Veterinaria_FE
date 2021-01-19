@@ -30,7 +30,7 @@ import a11yProps from '../Componentes_Genericos/a11yProps';
 export default function SimpleTabs() {
 
     let history = useHistory();
-  const Token = localStorage.getItem('ACCESS_TOKEN');
+  const Token = sessionStorage.getItem('ACCESS_TOKEN');
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {

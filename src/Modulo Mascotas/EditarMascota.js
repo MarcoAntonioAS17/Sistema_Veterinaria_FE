@@ -52,7 +52,7 @@ export default function EditarMascota(props) {
 
     const classes = useStyles();
     const [idMascota] = useState(props.match.params.id);
-    const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
     
     const [nombre, setNombre] = useState("");
     const [edad, setEdad] = useState(new Date().toISOString().slice(0,10));

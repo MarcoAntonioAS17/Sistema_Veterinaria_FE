@@ -57,8 +57,8 @@ export default function Inicio() {
   const classes = useStyles();
 
   let history = useHistory();
-  const Token = localStorage.getItem('ACCESS_TOKEN');
-  const Nivel = localStorage.getItem('NIVEL');
+  const Token = sessionStorage.getItem('ACCESS_TOKEN');
+  const Nivel = sessionStorage.getItem('NIVEL');
 
   const [dataInicio, setDataInicio] = useState();
   const [fectched, setFectched] = useState(false);

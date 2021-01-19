@@ -27,8 +27,8 @@ import Config from './Config';
 export default function SimpleTabs() {
     
     let history = useHistory();
-    const Token = localStorage.getItem('ACCESS_TOKEN');
-    const Nivel = localStorage.getItem('NIVEL');
+    const Token = sessionStorage.getItem('ACCESS_TOKEN');
+    const Nivel = sessionStorage.getItem('NIVEL');
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
