@@ -29,6 +29,7 @@ export default function Config() {
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
     const Name = localStorage.getItem('USER_NAME');
+    const Nivel = localStorage.getItem('NIVEL');
     
     const [dias, setDias] = useState(0);
     const [cantidad, setCantidad] = useState(0);
@@ -104,7 +105,7 @@ export default function Config() {
     <React.Fragment>
         <Grid container alignItems="center" alignContent="center">
             <Grid item xs = {12}>
-                <Typography align="center" variant="h5">Hola {Name}<br/> Tipo de Usuario
+                <Typography align="center" variant="h5">Hola {Name}<br/> Tipo de Usuario: {Nivel < 2? "Administrador":"Empleado"}
                 </Typography>
             </Grid>
             <Grid item  xs= {12} className={classes.container}>

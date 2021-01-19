@@ -144,10 +144,11 @@ const headCells = [
     { id: 'descripcion', numeric: false,  label: 'Descripción' },
 ];
 
-export default function EnhancedTable(props) {
+export default function EnhancedTable() {
 
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Nivel = localStorage.getItem('NIVEL');
     
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
@@ -319,9 +320,12 @@ export default function EnhancedTable(props) {
                                                 <TableCell >{row.raza}</TableCell>
                                                 <TableCell >{row.descripcion}</TableCell>
                                                 <TableCell >
-                                                    <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
-                                                        <Delete />
-                                                    </IconButton>
+                                                    {Nivel < 2?(
+                                                        <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    ):null}
+                                                    
                                                     
                                                     <Link to={"/Mascotas/Editar/"+row.idMascotas} >
                                                         <IconButton color="primary" edge="end">

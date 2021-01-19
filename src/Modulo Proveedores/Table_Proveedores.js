@@ -146,6 +146,7 @@ export default function EnhancedTable(props) {
 
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Nivel = localStorage.getItem('NIVEL');
 
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
@@ -312,17 +313,20 @@ export default function EnhancedTable(props) {
                                                 <TableCell >{row.proveedorNombre}</TableCell>
                                                 <TableCell >{row.telefono}</TableCell>
                                                 <TableCell >{row.correo}</TableCell>
-                                                <TableCell >
-                                                    <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
-                                                        <Delete />
-                                                    </IconButton>
+                                                
+                                                    {Nivel <2?(
+                                                        <TableCell >
+                                                            <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                            <Link to={"/Proveedores/Editar/"+row.idProveedores} >
+                                                                <IconButton color="primary" edge="end">
+                                                                    <Edit />
+                                                                </IconButton>
+                                                            </Link>
+                                                        </TableCell>
+                                                    ):null}
                                                    
-                                                    <Link to={"/Proveedores/Editar/"+row.idProveedores} >
-                                                        <IconButton color="primary" edge="end">
-                                                            <Edit />
-                                                        </IconButton>
-                                                    </Link>
-                                                </TableCell>
                                             </TableRow>
                                         );
                                     })}

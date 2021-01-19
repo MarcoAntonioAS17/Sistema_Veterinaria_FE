@@ -58,6 +58,8 @@ export default function Inicio() {
 
   let history = useHistory();
   const Token = localStorage.getItem('ACCESS_TOKEN');
+  const Nivel = localStorage.getItem('NIVEL');
+
   const [dataInicio, setDataInicio] = useState();
   const [fectched, setFectched] = useState(false);
   const [error, setError] = useState(false);
@@ -198,21 +200,24 @@ export default function Inicio() {
                     </Paper>
                 </Link>
                 </Grid>
-                <Grid item >
-                <Link to={"/Ventas"} className = {classes.enlace} >
-                    <Paper className={classes.paper} style={{backgroundColor: "rgb(180, 108, 230)"}} >
-                        <Typography align="center" variant="h6">Ventas de la semana</Typography>
-                        <Grid item container spacing={2}  className={classes.imgText} alignItems="center">
-                            <Grid item >
-                                <img className={classes.img} src={IcoVenta} alt ="Icono Ventas" />
+                {Nivel<2?(
+                    <Grid item >
+                    <Link to={"/Ventas"} className = {classes.enlace} >
+                        <Paper className={classes.paper} style={{backgroundColor: "rgb(180, 108, 230)"}} >
+                            <Typography align="center" variant="h6">Ventas de la semana</Typography>
+                            <Grid item container spacing={2}  className={classes.imgText} alignItems="center">
+                                <Grid item >
+                                    <img className={classes.img} src={IcoVenta} alt ="Icono Ventas" />
+                                </Grid>
+                                <Grid item >
+                                    <Typography > ${new Intl.NumberFormat('en-US').format(dataInicio.ventas_Sem)}</Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item >
-                                <Typography > ${new Intl.NumberFormat('en-US').format(dataInicio.ventas_Sem)}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Link>
-                </Grid>
+                        </Paper>
+                    </Link>
+                    </Grid>
+                ):null}
+                
             </Grid>
             <Grid item container xs={4}>
                 <Grid container>

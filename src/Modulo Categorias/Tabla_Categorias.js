@@ -142,6 +142,7 @@ export default function EnhancedTable(props) {
 
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
+    const Nivel = localStorage.getItem('NIVEL');
     
     const [rows, setRows] = React.useState({});
     const [error, setError] = React.useState(null);
@@ -308,9 +309,12 @@ export default function EnhancedTable(props) {
                                                 </TableCell>
                                                 <TableCell >{row.nombre}</TableCell>
                                                 <TableCell >
-                                                    <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
-                                                        <Delete />
-                                                    </IconButton>
+                                                    {Nivel < 2 ?(
+                                                        <IconButton color="secondary" edge="end" onClick={() => handleDialogOpen(row)}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    ):null}
+                                                    
                                                     
                                                 </TableCell>
                                             </TableRow>

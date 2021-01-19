@@ -25,6 +25,7 @@ import TablaDCompras from './Tabla_DCompras';
 export default function SimpleTabs() {
   
     let history = useHistory();
+    const Nivel = localStorage.getItem('NIVEL');
   const Token = localStorage.getItem('ACCESS_TOKEN');
   const [value, setValue] = React.useState(0);
 
@@ -42,32 +43,60 @@ export default function SimpleTabs() {
         }}/>
     );
 
-  }else
-  return (
-    <Router>
-        <Grid item={true} lg={12}>
-            <AppBar position="static">
-                <Tabs 
-                    value={value} 
-                    onChange={handleChange} 
-                    aria-label="simple tabs example"
-                    centered>
-                    <Tab label="Nueva compra" icon={<AddShoppingCart/>} {...a11yProps(0)} />
-                    <Tab label="Historial de compras" icon= {<ListAlt/>} {...a11yProps(1)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <FormCompras/>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Switch>
-                    <Route exact path='/Compras/:id' component={TablaDCompras} />
-                    <Route path='/' component={TablaCompras} />
-                </Switch>
-                
-            </TabPanel>
-            
-        </Grid>
-    </Router>
-  );
+  }else{
+      if (Nivel < 2) {
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            <Tab label="Nueva compra" icon={<AddShoppingCart/>} {...a11yProps(0)} />
+                            <Tab label="Historial de compras" icon= {<ListAlt/>} {...a11yProps(1)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+                        <FormCompras/>
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <Switch>
+                            <Route exact path='/Compras/:id' component={TablaDCompras} />
+                            <Route path='/' component={TablaCompras} />
+                        </Switch>
+                        
+                    </TabPanel>
+                    
+                </Grid>
+            </Router>
+          );
+      }else{
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            <Tab label="Historial de compras" icon= {<ListAlt/>} {...a11yProps(0)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+                        <Switch>
+                            <Route exact path='/Compras/:id' component={TablaDCompras} />
+                            <Route path='/' component={TablaCompras} />
+                        </Switch>
+                        
+                    </TabPanel>
+                    
+                </Grid>
+            </Router>
+          );
+      }
+  }
+  
 }

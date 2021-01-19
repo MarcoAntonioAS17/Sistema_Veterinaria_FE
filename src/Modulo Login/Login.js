@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import { 
   Avatar,
@@ -8,8 +8,10 @@ import {
   TextField,
   Paper,
   Grid,
-  Typography
+  Typography,
+  Snackbar
 } from '@material-ui/core';
+import Alert from '../Componentes_Genericos/Alerta';
 import {
   LockOutlined,
   AccountCircle,
@@ -74,6 +76,10 @@ export default function SignInSide() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
+  const [openbar, setOpenbar] = useState(false);
+  const [succesbar, setSuccesbar] = useState(false);
+  const [barMensaje, setBarMensaje] = useState("");
+
   const handleSubmit=(event)=> {
     
     axios.post ('http://localhost:50563/api/Autenticacion',
@@ -89,14 +95,30 @@ export default function SignInSide() {
           localStorage.setItem("USER_NAME", json.userName);
           localStorage.setItem("NIVEL", json.nivel);
 					history.push("/");
-				}
+				}else {
+          setBarMensaje("Contraseña o usuario invalido");
+          setOpenbar(true);
+          setSuccesbar(false);
+        }
 			},
 			(error) => {
-				console.log("Exception " + error);
+        console.log("Exception " + error);
+        
+        setBarMensaje("Contraseña o usuario invalido");
+        
+        setOpenbar(true);
+        setSuccesbar(false);
 			}
 		);
     event.preventDefault();
   }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenbar(false);
+  };
 
   return (
     
@@ -171,6 +193,11 @@ export default function SignInSide() {
               Ingresar
             </Button>
           </form>
+          <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                  {barMensaje}
+              </Alert>
+          </Snackbar>
         </div>
       </Grid>
       </ThemeProvider>

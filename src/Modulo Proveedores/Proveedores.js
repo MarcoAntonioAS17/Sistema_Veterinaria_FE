@@ -1,6 +1,6 @@
 import React from 'react';
 import FormProveedores from './Formulario_Proveedores';
-import Tabla_Proveedores from './Table_Proveedores';
+import TablaProveedores from './Table_Proveedores';
 import {
     AppBar,
     Tabs,
@@ -26,7 +26,8 @@ export default function SimpleTabs() {
     
     let history = useHistory();
     const Token = localStorage.getItem('ACCESS_TOKEN');
-  const [value, setValue] = React.useState(0);
+    const Nivel = localStorage.getItem('NIVEL');
+    const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -42,35 +43,60 @@ export default function SimpleTabs() {
         }}/>
     );
 
-  }else
-  return (
-    <Router>
-        <Grid item={true} lg={12}>
-            <AppBar position="static">
-                <Tabs 
-                    value={value} 
-                    onChange={handleChange} 
-                    aria-label="simple tabs example"
-                    centered>
+  }else{
+      if (Nivel <2){
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            
+                            <Tab label="Proveedores" icon= {<BusinessCenter/>} {...a11yProps(0)} />
+                            <Tab label="Nuevo Proveedor" icon= {<Add/>} {...a11yProps(1)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+        
+                        <Switch>
+                            <Route exact path='/Proveedores/Editar/:id' component = {EditarProveedores} />
+                            <Route path='/'  component = {TablaProveedores}/>
+                        </Switch>
                     
-                    <Tab label="Proveedores" icon= {<BusinessCenter/>} {...a11yProps(0)} />
-                    <Tab label="Nuevo Proveedor" icon= {<Add/>} {...a11yProps(1)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-
-                <Switch>
-                    <Route exact path='/Proveedores/Editar/:id' component = {EditarProveedores} />
-                    <Route path='/'  component = {Tabla_Proveedores}/>
-                </Switch>
-            
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-
-                <FormProveedores/>
-
-            </TabPanel>
-        </Grid>
-    </Router>
-  );
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+        
+                        <FormProveedores/>
+        
+                    </TabPanel>
+                </Grid>
+            </Router>
+          );
+      }else{
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            
+                            <Tab label="Proveedores" icon= {<BusinessCenter/>} {...a11yProps(0)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+                        <TablaProveedores/>
+                    
+                    </TabPanel>
+                </Grid>
+            </Router>
+          );
+      }
+  }
+  
 }
