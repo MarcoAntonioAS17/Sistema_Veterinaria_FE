@@ -10,7 +10,7 @@ import {
     MenuItem,
     InputLabel
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -21,10 +21,6 @@ import{
 } from '@material-ui/icons';
 import { Link, Redirect } from 'react-router-dom';
 
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -62,9 +58,19 @@ export default function EditarInventario(props) {
     const [rCategoria, setRCategoria] = useState(1);
     const [rProveedor, setRProveedor] = useState(1);
 
+    const [erridProductos, setErrIdProductos] = useState(false);
+    const [errnombre, setErrNombre] = useState(false);
+    const [errprecioVenta, setErrPrecioVenta] = useState(false);
+    const [errprecioCompra, setErrPrecioCompra] = useState(false);
+    const [errcantidad, setErrCantidad] = useState(false);
+    const [errdescripcion, setErrDescripcion] = useState(false);
+    const [erRCategoria, setErrRCategoria] = useState(false);
+    const [errRProveedor, setErrRProveedor] = useState(false);
+
     const [categoria, setCategoria] = useState(null);
     const [proveedor, setProveedor] = useState(null);
 
+    const [barMensaje, setBarMensaje] = useState("");
     const [openbar, setOpenbar] = useState(false);
     const [succesbar, setSuccesbar] = useState(false);
     const [redi, setRedi] = React.useState(false);
@@ -146,19 +152,92 @@ export default function EditarInventario(props) {
             return () => ac.abort();
     },[idProductos, Token]);
 
+    function validar_parametros() {
+        let error = false;
+        setErrIdProductos(false);
+        setErrNombre(false);
+        setErrPrecioVenta(false);
+        setErrPrecioCompra(false);
+        setErrCantidad(false);
+        setErrDescripcion(false);
+        setErrRCategoria(false);
+        setErrRProveedor(false);
+
+        if (!idProductos.match("^[A-Za-z0-9]+$") || idProductos.length > 15){
+            error = true;
+            setErrIdProductos(true);
+        }
+        if (!nombre.match("^[A-Za-z0-9., ]+$") || nombre.length > 45){
+            error = true;
+            setErrNombre(true);
+        }
+        if (parseFloat(precioVenta) < 0 || !String(precioVenta).match("^[0-9.]+$")){
+            error = true;
+            setErrPrecioVenta(true);
+        }
+        if (parseFloat(precioCompra) < 0 || !String(precioCompra).match("^[0-9.]+$")){
+            error = true;
+            setErrPrecioCompra(true);
+        }
+        if (parseInt(cantidad) < 0 || !String(cantidad).match("^[0-9.]+$")){
+            error = true;
+            setErrCantidad(true);
+        }
+        if (parseInt(rCategoria) < 1){
+            error = true;
+            setErrRCategoria(true);
+        }
+        if (parseInt(rProveedor) < 1){
+            error = true;
+            setErrRProveedor(true);
+        }
+        if (descripcion.length > 0 )
+            if (!descripcion.match("^[A-Za-z0-9., ]+$") || descripcion >60){
+                error = true;
+                setErrDescripcion(true);
+            }
+        if (error){
+            setBarMensaje("Corregir campos");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+
+        return error;
+    }
+
     const handleActualizar = () => {
+
+        if (validar_parametros())
+            return;
+
+        let data;
+        if (caducidad.length > 0)
+            data = {
+                "IdProductos" : idProductos,
+                "Nombre" : nombre,
+                "PrecioVenta" : parseFloat(precioVenta),
+                "PrecioCompra" : parseFloat(precioCompra),
+                "Cantidad" : parseInt(cantidad),
+                "Caducidad" : caducidad+"T00:00:00",
+                "Descripcion" : descripcion,
+                "RCategoria" : parseInt(rCategoria),
+                "RProveedor" : parseInt(rProveedor)
+            }
+        else
+            data = {
+                "IdProductos" : idProductos,
+                "Nombre" : nombre,
+                "PrecioVenta" : parseFloat(precioVenta),
+                "PrecioCompra" : parseFloat(precioCompra),
+                "Cantidad" : parseInt(cantidad),
+                "Descripcion" : descripcion,
+                "RCategoria" : parseInt(rCategoria),
+                "RProveedor" : parseInt(rProveedor)
+            }
         
         axios.put ('http://localhost:50563/api/Productos/'+idProductos,
-		{
-            "Nombre" : nombre,
-            "PrecioVenta" : parseFloat(precioVenta),
-            "PrecioCompra" : parseFloat(precioCompra),
-            "Cantidad" : parseInt(cantidad),
-            "Caducidad" : caducidad+"T00:00:00",
-            "Descripcion" : descripcion,
-            "RCategoria" : parseInt(rCategoria),
-            "RProveedor" : parseInt(rProveedor)
-		},{
+            JSON.stringify(data)
+            ,{
             headers: {
 				'Accept': 'application/json',
 				'Content-type': 'application/json',
@@ -169,15 +248,18 @@ export default function EditarInventario(props) {
                 console.log(response);
 				if (response.data.status === "Success") {
                     
+                    setBarMensaje("Producto actualizado");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al registrar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al registrar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -185,7 +267,8 @@ export default function EditarInventario(props) {
     };
 
     const handleClose = (event, reason) => {
-        setRedi(true);
+        if (succesbar)
+            setRedi(true);
         if (reason === 'clickaway') {
           return;
         }
@@ -215,6 +298,7 @@ export default function EditarInventario(props) {
             <React.Fragment>
                 <form>
                     <TextField
+                        error = {erridProductos}
                         id="IdProducto"
                         label="Clave del producto"
                         style={{ margin: 8 }}
@@ -229,6 +313,7 @@ export default function EditarInventario(props) {
                         
                     />
                     <TextField
+                        error = {errnombre}
                         id="Producto_Nombre"
                         label="Nombre"
                         style={{ margin: 8 }}
@@ -242,6 +327,7 @@ export default function EditarInventario(props) {
                         
                     />
                     <TextField
+                        error = {errprecioVenta}
                         id="Producto_PVenta"
                         label="Precio de venta"
                         style={{ margin: 8 }}
@@ -260,6 +346,7 @@ export default function EditarInventario(props) {
                           }}
                     />
                     <TextField
+                        error = {errprecioCompra}
                         id="Producto_PCompra"
                         label="Precio de compra"
                         style={{ margin: 8 }}
@@ -278,6 +365,7 @@ export default function EditarInventario(props) {
                           }}
                     />
                     <TextField
+                        error = {errcantidad}
                         id="Producto_Canidad"
                         label="Cantidad en inventario"
                         style={{ margin: 8 }}
@@ -290,6 +378,7 @@ export default function EditarInventario(props) {
                         onChange = {event => setCantidad(event.target.value)}
                     />
                     <TextField  
+                        required = {true}
                         id="Producto_Caducidad"
                         label="Caducidad más proxima"
                         style={{ margin: 8 }}
@@ -307,7 +396,10 @@ export default function EditarInventario(props) {
                             ),
                           }}  
                     />
-                    <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                    <FormControl
+                        error = {erRCategoria}
+                        required = {true}
+                        variant="outlined" fullWidth={true} className={classes.formControl} >
                         <InputLabel className={classes.label} id="demo-simple-select-label">Categoria</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
@@ -319,7 +411,10 @@ export default function EditarInventario(props) {
                         </Select>
                     </FormControl>
 
-                    <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                    <FormControl 
+                        error = {errRProveedor}
+                        required = {true}
+                        variant="outlined" fullWidth={true} className={classes.formControl} >
                         <InputLabel className={classes.label} id="demo-simple-select-label">Proveedor</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
@@ -331,6 +426,7 @@ export default function EditarInventario(props) {
                         </Select>
                     </FormControl>
                     <TextField
+                        error = {errdescripcion}
                         id="Producto_Descripcion"
                         label="Descripcion"
                         style={{ margin: 8 }}
@@ -361,7 +457,7 @@ export default function EditarInventario(props) {
                     </Button>
                     <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                         <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {succesbar ? "Actualizado con exito": "Error al actualizar"}
+                            {barMensaje}
                         </Alert>
                     </Snackbar>
                     {redi? <Redirect to="/Inventario" />:null}

@@ -10,7 +10,7 @@ import {
     MenuItem,
     InputLabel
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alerta from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -19,11 +19,6 @@ import{
     Schedule,
     Info
 } from '@material-ui/icons';
-
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -51,22 +46,64 @@ export default function FormClientes() {
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
 
-    const [fecha, setFecha] = useState();
-    const [hora, setHora] = useState();
+    const [fecha, setFecha] = useState(new Date().toISOString().slice(0,10));
+    const [hora, setHora] = useState(new Date().toTimeString().slice(0,5));
     const [rcliente, setRcliente] = useState(0);
     const [tipo, setTipo] = useState("Estetica");
     const [rmascota, setRmascota] = useState('');
     const [notas, setNotas] = useState("");
-    const [estado] = useState(true);
+
+    const [errnotas, setErrNotas] = useState(false);
+    const [err_rmascota, setErrRmascota] = useState(false);
 
     const [clientes, setClientes] = useState(null);
     const [mascotas, setMascotas] = useState(null);
 
+    const [barMensaje, setBarMensaje] = useState("");
     const [openbar, setOpenbar] = useState(false);
     const [succesbar, setSuccesbar] = useState(false);
 
+    function validar_campos(){
+        let error = false;
+        setErrRmascota(false);
+        setErrNotas(false);
+
+        if (notas.length > 0){
+            if (!notas.match("^[A-Za-z0-9 ]+$")){
+                error = true;
+                setErrNotas(true);
+            }
+        }
+        if (mascotas == null || mascotas.length < 1){
+            error = true
+            setErrRmascota(true);
+        }else{
+            let encontrado = false;
+            mascotas.forEach(element => {
+                if (parseInt(element.idMascotas) === parseInt(rmascota)){
+                    encontrado = true;
+                }
+            });
+            if (!encontrado){
+                error = true
+                setErrRmascota(true);
+            }
+
+        }
+        if (error){
+            setBarMensaje("Corregir campos");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+
+        return error;
+    }
+
     const handleGuardarClick = () => {
         
+        if (validar_campos())
+            return;
+
         axios.post ('http://localhost:50563/api/Citas/',
 		{
 			"RCliente" : parseInt(rcliente),
@@ -85,18 +122,19 @@ export default function FormClientes() {
                 
 				if (response.data.status === "Success") {
                     
-                    setTipo("");
                     setNotas("");
-                    
+                    setBarMensaje("Cita registrada");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al registrar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al registrar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -121,7 +159,6 @@ export default function FormClientes() {
                 if (response2.status === 200) {
                     var res = response2.data;
                     setClientes(res);
-                    //setRcliente(res[0].idClientes)
                 }
             })
             .catch (function (error) {
@@ -129,7 +166,7 @@ export default function FormClientes() {
             })
         ]);
             return () => ac.abort();
-    },[estado, Token]);
+    },[Token]);
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -140,7 +177,6 @@ export default function FormClientes() {
     };
 
     const handleCancel = () =>{
-        setTipo("");
         setNotas("");
     }
     
@@ -189,7 +225,9 @@ export default function FormClientes() {
             return(
                 <React.Fragment>
                     <form>
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Tipo de Cita</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -244,7 +282,10 @@ export default function FormClientes() {
                             }}
                         />
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            placeholder = "Da clic y selecciona un cliente"
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Cliente</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -256,7 +297,11 @@ export default function FormClientes() {
                             </Select>
                         </FormControl>
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            placeholder = "Da clic y selecciona una mascota"
+                            required = {true}
+                            error = {err_rmascota}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Mascota</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -269,6 +314,7 @@ export default function FormClientes() {
                         </FormControl>
 
                         <TextField
+                            error = {errnotas}
                             id="Cita_Notas"
                             label="Notas"
                             style={{ margin: 8 }}
@@ -297,9 +343,9 @@ export default function FormClientes() {
                             Guardar
                         </Button>
                         <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                            <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {succesbar ? "Registrado con exito": "Error al registrar"}
-                            </Alert>
+                            <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                                {barMensaje}
+                            </Alerta>
                         </Snackbar>
                         <Button
                             className = {classes.button}
@@ -376,7 +422,8 @@ export default function FormClientes() {
                             }}
                         />
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Cliente</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -388,19 +435,22 @@ export default function FormClientes() {
                             </Select>
                         </FormControl>
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            error = {err_rmascota}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Mascota</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 value = {rmascota}
-                                
+
                             >
                                 
                             </Select>
                         </FormControl>
 
                         <TextField
+                            error = {errnotas}
                             id="Cita_Notas"
                             label="Notas"
                             style={{ margin: 8 }}
@@ -429,9 +479,9 @@ export default function FormClientes() {
                             Guardar
                         </Button>
                         <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                            <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {succesbar ? "Registrado con exito": "Error al registrar"}
-                            </Alert>
+                            <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                                {barMensaje}
+                            </Alerta>
                         </Snackbar>
                         <Button
                             className = {classes.button}
@@ -452,7 +502,7 @@ export default function FormClientes() {
         return(
             <React.Fragment>
                 <div className = {classes.buttonContainer}>
-                    <Alert severity="error">Error al conectar con el servidor.</Alert>
+                    <Alerta severity="error">Error al conectar con el servidor.</Alerta>
                 </div>
             </React.Fragment>
         );

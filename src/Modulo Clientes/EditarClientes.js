@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import {
     Button,
@@ -7,7 +7,7 @@ import {
     Snackbar,
     Typography
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alerta from '../Componentes_Genericos/Alerta'
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -17,11 +17,6 @@ import{
     Cancel
 } from '@material-ui/icons';
 import { Link, Redirect } from 'react-router-dom';
-
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles(() => ({
     button: {
@@ -38,26 +33,75 @@ export default function EditarClientes(props) {
 
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
-    const [idCliente] = React.useState(props.match.params.id);
+    const [idCliente] = useState(props.match.params.id);
     
-    const [nombre, setNombre] = React.useState("");
-    const [telefono, setTelefono] = React.useState("");
-    const [correo, setCorreo] = React.useState("");
-    
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
-    const [redi, setRedi] = React.useState(false);
+    const [nombre, setNombre] = useState("");
+    const [telefono, setTelefono] = useState("");
+    const [correo, setCorreo] = useState("");
+
+    const [errNombre, setErrNombre] = useState(false);
+    const [errTelefono, setErrTelefono] = useState(false);
+    const [errCorreo, setErrCorreo] = useState(false);
+
+    const [barMensaje, setBarMensaje] = useState("");
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
+    const [redi, setRedi] = useState(false);
 
     const handleClose = (event, reason) => {
-        setRedi(true);
+        if (succesbar)
+            setRedi(true);
         if (reason === 'clickaway') {
           return;
         }
-        
         setOpenbar(false);
     };
 
+    function handleValidar(){
+        let error = false;
+        setErrNombre(false);
+        setErrTelefono(false);
+        setErrCorreo(false);
+
+        if (nombre.length < 5 || !nombre.match("^[A-Za-z0-9ñ ]+$")) {
+            setErrNombre(true);
+            error = true;
+        }
+        if (telefono.length > 1){
+            if (telefono.length < 9 || !telefono.match("^[0-9-]+$")){
+                setErrTelefono(true);
+                error = true;
+            }
+        }
+        if (correo.length > 0){
+            let lastAtPos = correo.lastIndexOf('@');
+            let lastDotPos = correo.lastIndexOf('.');
+
+            if (!(lastAtPos < lastDotPos && lastAtPos > 0 && correo.indexOf('@@') === -1 && lastDotPos > 2 && (correo.length - lastDotPos) > 2)) {
+                setErrCorreo(true);
+                error = true;
+            }
+        }
+        if (error)
+            setBarMensaje("Campos por corregir");
+        if (correo.length < 1 && telefono.length <1){
+            error =true;
+            setBarMensaje("Ingresa telefono o correo");
+            setErrTelefono(true);
+        }
+        if (error){
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+        return error;
+    }
+
     const handleActualizar = () =>{
+
+        if (handleValidar()){
+            return;
+        }
+
         axios.put ('http://localhost:50563/api/Clientes/' + idCliente, {
             "nombre": nombre,
 			"telefono": telefono,
@@ -75,15 +119,18 @@ export default function EditarClientes(props) {
                     setCorreo("");
                     setNombre("");
                     setTelefono("");
+                    setBarMensaje("Actualizado con exito")
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al actualizar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al actualizar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -103,7 +150,7 @@ export default function EditarClientes(props) {
 		})
 		.then (response => {
 			if (response.status === 200) {
-                console.log(response);
+                
                 setNombre(response.data.nombre);
                 setTelefono(response.data.telefono);
                 setCorreo(response.data.correo);
@@ -119,6 +166,7 @@ export default function EditarClientes(props) {
             <Typography variant="h4"> Actualizar datos de cliente {idCliente}</Typography>
             <form>
                 <TextField
+                    error = {errNombre}
                     id="Cliente_Nombre"
                     label="Nombre del Cliente"
                     style={{ margin: 8 }}
@@ -138,7 +186,7 @@ export default function EditarClientes(props) {
                       }}
                 />
                 <TextField
-                    
+                    error = {errTelefono}
                     id="Cliente_Telefono"
                     label="Número de telefono"
                     style={{ margin: 8 }}
@@ -158,6 +206,7 @@ export default function EditarClientes(props) {
                     
                 />
                 <TextField
+                    error = {errCorreo}
                     id="Cliente_Email"
                     label="Correo electrónico"
                     style={{ margin: 8 }}
@@ -187,9 +236,9 @@ export default function EditarClientes(props) {
                     Actualizar
                 </Button>
                 <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                        {succesbar ? "Actualizado con exito": "Error al actualizar"}
-                    </Alert>
+                    <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                        {barMensaje}
+                    </Alerta>
                 </Snackbar>
                 {redi? <Redirect to="/Clientes" />:null}
                 

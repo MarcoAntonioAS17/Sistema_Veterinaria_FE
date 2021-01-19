@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import axios from 'axios';
 import {
     Button,
@@ -10,7 +10,7 @@ import {
     MenuItem,
     InputLabel
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -19,10 +19,6 @@ import{
     Cancel
 } from '@material-ui/icons';
 
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -50,15 +46,36 @@ export default function FormUsuarios() {
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
 
-    const [userName, setUserName] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [nivel, setNivel] = React.useState(2);
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
+    const [nivel, setNivel] = useState(2);
+    const [errorName, setErrorN] = useState(false);
+    const [errorPass, setErrorP] = useState(false);
 
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
+    const [barMensaje, setBarMensaje] = useState("");
 
     const handleGuardarClick = () => {
-        
+        let error = false;
+        setErrorN(false);
+        setErrorP(false);
+
+        if (userName.length < 8) {
+            setErrorN(true);
+            error = true;
+        }
+        if (password.length < 6){
+            setErrorP(true);
+            error = true;
+        }
+        if (error){
+            setBarMensaje("Campos por corregir");
+            setOpenbar(true);
+            setSuccesbar(false);
+            return;
+        }
+            
         axios.post ('http://localhost:50563/api/Usuarios/',
 		{
 			"userName": userName,
@@ -74,19 +91,20 @@ export default function FormUsuarios() {
 			(response) => {
                 
 				if (response.data.status === "Success") {
-                    console.log("Guardado con exito");
-                    
                     handleCancel();
 
+                    setBarMensaje("Registrado con exito");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error el registrar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error el registrar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -97,7 +115,6 @@ export default function FormUsuarios() {
         if (reason === 'clickaway') {
           return;
         }
-    
         setOpenbar(false);
     };
 
@@ -111,6 +128,7 @@ export default function FormUsuarios() {
         <React.Fragment>
             <form>
                 <TextField
+                    error = {errorName}
                     id="User_userName"
                     label="Nombre"
                     style={{ margin: 8 }}
@@ -121,6 +139,7 @@ export default function FormUsuarios() {
                     placeholder ="Ingrese su nombre de usuario"
                     value = {userName}
                     onChange = {event => setUserName(event.target.value)}
+                    helperText= "Min. 8 caracteres"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -130,7 +149,7 @@ export default function FormUsuarios() {
                       }}
                 />
                 <TextField
-                    
+                    error = {errorPass}
                     id="User_password"
                     label="Contraseña"
                     style={{ margin: 8 }}
@@ -141,6 +160,7 @@ export default function FormUsuarios() {
                     margin="normal"
                     variant="outlined"
                     type = "password"
+                    helperText= "Min. 6 caracteres"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -177,7 +197,7 @@ export default function FormUsuarios() {
                 </Button>
                 <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                        {succesbar ? "Registrado con exito": "Error al registrar"}
+                        {barMensaje}
                     </Alert>
                 </Snackbar>
                 <Button

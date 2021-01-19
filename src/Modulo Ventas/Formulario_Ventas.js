@@ -11,7 +11,7 @@ import {
     InputLabel,
     Typography
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -23,10 +23,6 @@ import{
 } from '@material-ui/icons';
 import TablaCarrito from '../Componentes_Genericos/Tabla_Carrito';
 
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -145,7 +141,7 @@ export default function FormVentas() {
                     
                     rows.splice(0,rows.length);
                     setTotal(0);
-                    setCambio(pago - total);
+                    setCambio(0);
                     setMensaje("Venta completada");
                     setOpenbar(true);
                     setSuccesbar(true);
@@ -181,7 +177,8 @@ export default function FormVentas() {
             }
         });
         setTotal(0)
-        setCambio(0);
+        setCambio(-1);
+        setPago(0);
         rows.splice(0,rows.length);
         setMensaje("Venta cancelada");
         setOpenbar(true);
@@ -541,11 +538,6 @@ export default function FormVentas() {
                         >
                             Finalizar venta
                         </Button>
-                        <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                            <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {mensaje}
-                            </Alert>
-                        </Snackbar>
                         <Button
                             className = {classes.button}
                             variant="contained"
@@ -558,7 +550,11 @@ export default function FormVentas() {
                         </div>
                         </div>
                     ):null}
-                    
+                    <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                            {mensaje}
+                        </Alert>
+                    </Snackbar>
                 </form>
                 
             </React.Fragment>

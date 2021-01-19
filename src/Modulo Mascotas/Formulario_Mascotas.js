@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect , useState} from 'react'
 import axios from 'axios';
 import {
     Button,
@@ -10,7 +10,7 @@ import {
     MenuItem,
     InputLabel
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alerta from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -19,11 +19,6 @@ import{
     CalendarToday,
     Info
 } from '@material-ui/icons';
-
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -51,16 +46,23 @@ export default function FormClientes() {
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
 
-    const [nombre, setNombre] = React.useState("");
-    const [edad, setEdad] = React.useState(new Date());
-    const [tipo, setTipo] = React.useState("");
-    const [raza, setRaza] = React.useState("");
-    const [descrip, setDescrip] = React.useState("");
-    const [rcliente, setRcliente] = React.useState(0);
-    const [clientes, setClientes] = React.useState(null);
+    const [nombre, setNombre] = useState("");
+    const [edad, setEdad] = useState(new Date().toISOString().slice(0,10));
+    const [tipo, setTipo] = useState("");
+    const [raza, setRaza] = useState("");
+    const [descrip, setDescrip] = useState("");
+    const [rcliente, setRcliente] = useState(0);
+    const [clientes, setClientes] = useState(null);
 
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
+    const [errnombre, setErrNombre] = useState(false);
+    const [errtipo, setErrTipo] = useState(false);
+    const [errraza, setErrRaza] = useState(false);
+    const [errdescrip, setErrDescrip] = useState(false);
+    const [erredad, setErrEdad] = useState(false);
+
+    const [barMensaje, setBarMensaje] = useState("");
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
 
     useEffect(() =>{
 
@@ -91,8 +93,55 @@ export default function FormClientes() {
             return () => ac.abort();
     },[Token]);
 
+    function handleValidar(){
+        let error = false;
+        setErrNombre(false);
+        setErrTipo(false);
+        setErrRaza(false);
+        setErrDescrip(false);
+        setErrEdad(false);
+        
+        if (!nombre.match("^[A-Za-z ]+$")){
+            error = true;
+            setErrNombre(true);
+        }
+        if (new Date(edad).getTime() > new Date().getTime()){
+            console.log("Error en fecha");
+            setErrEdad(true);
+            error =true;
+        }
+        if (tipo.length > 0){
+            if(!tipo.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrTipo(true);
+            }
+        }
+        if (raza.length > 0){
+            if(!raza.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrRaza(true);
+            }
+        }
+        if (descrip.length > 0){
+            if(!descrip.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrDescrip(true);
+            }
+        }
+        if (error){
+            setBarMensaje("Corregir campos");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+
+        return error;
+    }
+
     const handleGuardarClick = () => {
         
+        if (handleValidar())
+            return;
+
         axios.post ('http://localhost:50563/api/Mascotas',
 		{
 			"nombre": nombre,
@@ -109,16 +158,15 @@ export default function FormClientes() {
 			}
         }).then (
 			(response) => {
-                console.log(response);
+                
 				if (response.data.status === "Success") {
-                    console.log("Guardado con exito");
                     
                     setNombre("");
-                    setEdad(new Date());
                     setTipo("");
                     setRaza("");
                     setDescrip("");
-                    setRcliente("");
+
+                    setBarMensaje("Mascota guardada");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
@@ -128,6 +176,7 @@ export default function FormClientes() {
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al registrar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -144,18 +193,16 @@ export default function FormClientes() {
 
     const handleCancel = () =>{
         setNombre("");
-        setEdad(new Date());
         setTipo("");
         setRaza("");
         setDescrip("");
-        setRcliente("");
     }
 
     if (clientes == null) {
         return(
             <React.Fragment>
                 <div className = {classes.buttonContainer}>
-                    <Alert severity="error">Error al conectar con el servidor.</Alert>
+                    <Alerta severity="error">Error al conectar con el servidor.</Alerta>
                 </div>
             </React.Fragment>
         );
@@ -169,6 +216,7 @@ export default function FormClientes() {
             <React.Fragment>
                 <form>
                     <TextField
+                        error={errnombre}
                         id="Mascota_Nombre"
                         label="Nombre de la Mascota"
                         style={{ margin: 8 }}
@@ -177,6 +225,7 @@ export default function FormClientes() {
                         required = {true}
                         variant="outlined"
                         placeholder ="Nombre"
+                        helperText = "Solo letras"
                         value = {nombre}
                         onChange = {event => setNombre(event.target.value)}
                         InputProps={{
@@ -187,8 +236,10 @@ export default function FormClientes() {
                             ),
                           }}
                     />
-                    <TextField  
+                    <TextField
+                        error = {erredad}
                         id="Mascota_Edad"
+                        required={true}
                         label="Fecha de nacimiento (Aprox)"
                         style={{ margin: 8 }}
                         fullWidth
@@ -206,6 +257,7 @@ export default function FormClientes() {
                           }}  
                     />
                     <TextField
+                        error={errtipo}
                         id="Mascota_Tipo"
                         label="Tipo de Mascota"
                         style={{ margin: 8 }}
@@ -217,7 +269,8 @@ export default function FormClientes() {
                         placeholder = "¿Perro, gato u otro?"
                         
                     />
-                    <TextField       
+                    <TextField    
+                        error={errraza}   
                         id="Mascota_Raza"
                         label="Raza de la mascota"
                         style={{ margin: 8 }}
@@ -230,6 +283,7 @@ export default function FormClientes() {
                           
                     />
                     <TextField
+                        error={errdescrip}
                         id="Mascota_Descripcion"
                         label="Descripción"
                         style={{ margin: 8 }}
@@ -270,9 +324,9 @@ export default function FormClientes() {
                         Guardar
                     </Button>
                     <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {succesbar ? "Registrado con exito": "Error al registrar"}
-                        </Alert>
+                        <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                            {barMensaje}
+                        </Alerta>
                     </Snackbar>
                     <Button
                         className = {classes.button}

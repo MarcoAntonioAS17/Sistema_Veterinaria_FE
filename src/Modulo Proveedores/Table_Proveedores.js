@@ -365,7 +365,7 @@ export default function EnhancedTable(props) {
                     </Paper>
                     <Snackbar open={openbar} autoHideDuration={6000} onClose={handleClose}>
                         <Alerta onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {succesbar ? "Registrado con exito": "Error al registrar"}
+                            {succesbar ? "Eliminado con exito": "Error al eliminar"}
                         </Alerta>
                     </Snackbar>
                 </div>

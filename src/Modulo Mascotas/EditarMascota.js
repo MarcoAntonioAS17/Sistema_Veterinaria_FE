@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import {
     Button,
@@ -51,31 +51,86 @@ const useStyles = makeStyles((theme) => ({
 export default function EditarMascota(props) {
 
     const classes = useStyles();
-    const [idMascota] = React.useState(props.match.params.id);
+    const [idMascota] = useState(props.match.params.id);
     const Token = localStorage.getItem('ACCESS_TOKEN');
     
-    const [nombre, setNombre] = React.useState("");
-    const [edad, setEdad] = React.useState(new Date());
-    const [tipo, setTipo] = React.useState("");
-    const [raza, setRaza] = React.useState("");
-    const [descrip, setDescrip] = React.useState("");
-    const [rcliente, setRcliente] = React.useState(0);
-    const [clientes, setClientes] = React.useState(null);
+    const [nombre, setNombre] = useState("");
+    const [edad, setEdad] = useState(new Date().toISOString().slice(0,10));
+    const [tipo, setTipo] = useState("");
+    const [raza, setRaza] = useState("");
+    const [descrip, setDescrip] = useState("");
+    const [rcliente, setRcliente] = useState(0);
+    const [clientes, setClientes] = useState(null);
     
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
-    const [redi, setRedi] = React.useState(false);
+    const [errnombre, setErrNombre] = useState(false);
+    const [errtipo, setErrTipo] = useState(false);
+    const [errraza, setErrRaza] = useState(false);
+    const [errdescrip, setErrDescrip] = useState(false);
+    const [erredad, setErrEdad] = useState(false);
+    
+    const [barMensaje, setBarMensaje] = useState("");
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
+    const [redi, setRedi] = useState(false);
 
     const handleClose = (event, reason) => {
-        setRedi(true);
+        if (succesbar)
+            setRedi(true);
         if (reason === 'clickaway') {
           return;
         }
-        
         setOpenbar(false);
     };
 
+    function handleValidar(){
+        let error = false;
+        setErrNombre(false);
+        setErrTipo(false);
+        setErrRaza(false);
+        setErrDescrip(false);
+        setErrEdad(false);
+
+        if (!nombre.match("^[A-Za-z ]+$")){
+            error = true;
+            setErrNombre(true);
+        }
+        if (new Date(edad).getTime() > new Date().getTime()){
+            console.log("Error en fecha");
+            setErrEdad(true);
+            error =true;
+        }
+        if (tipo.length > 0){
+            if(!tipo.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrTipo(true);
+            }
+        }
+        if (raza.length > 0){
+            if(!raza.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrRaza(true);
+            }
+        }
+        if (descrip.length > 0){
+            if(!descrip.match("^[A-Za-z ]+$")){
+                error = true;
+                setErrDescrip(true);
+            }
+        }
+        if (error){
+            setBarMensaje("Corregir campos");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+
+        return error;
+    }
+
     const handleActualizar = () =>{
+
+        if (handleValidar())
+            return;
+
         axios.put ('http://localhost:50563/api/Mascotas/' + idMascota, {
             "nombre": nombre,
             "edad": edad+"T00:00:00",
@@ -95,21 +150,22 @@ export default function EditarMascota(props) {
 				if (response.data.status === "Success") {
                     
                     setNombre("");
-                    setEdad(new Date());
                     setTipo("");
                     setRaza("");
                     setDescrip("");
-                    setRcliente("");
 
+                    setBarMensaje("Datos actualizados");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al actualizar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al actualizar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -150,8 +206,6 @@ export default function EditarMascota(props) {
                     if (response2.status === 200) {
                         var res = response2.data;
                         setClientes(res);
-                        console.log(res);
-                        console.log(res[0].idClientes);
                     }
                 })
                 .catch (function (error) {
@@ -185,84 +239,89 @@ export default function EditarMascota(props) {
                 <Typography variant="h4"> Actualizar datos de Mascota {idMascota}</Typography>
                 <form>
                 <TextField
-                        id="Mascota_Nombre"
-                        label="Nombre de la Mascota"
-                        style={{ margin: 8 }}
-                        fullWidth
-                        margin="normal"
-                        required = {true}
-                        variant="outlined"
-                        placeholder ="Nombre"
-                        value = {nombre}
-                        onChange = {event => setNombre(event.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <Pets />
-                              </InputAdornment>
-                            ),
-                          }}
-                    />
-                    <TextField  
-                        id="Mascota_Edad"
-                        label="Fecha de nacimiento (Aprox)"
-                        style={{ margin: 8 }}
-                        fullWidth
-                        value = {edad}
-                        onChange = {event => setEdad(event.target.value)}
-                        margin="normal"
-                        variant="outlined"
-                        type = "date"
-                        InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <CalendarToday/>
-                              </InputAdornment>
-                            ),
-                          }}  
-                    />
-                    <TextField
-                        id="Mascota_Tipo"
-                        label="Tipo de Mascota"
-                        style={{ margin: 8 }}
-                        fullWidth
-                        value = {tipo}
-                        onChange = {event => setTipo(event.target.value)}
-                        margin="normal"
-                        variant="outlined"
-                        placeholder = "¿Perro, gato u otro?"
+                    error={errnombre}
+                    id="Mascota_Nombre"
+                    label="Nombre de la Mascota"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    margin="normal"
+                    required = {true}
+                    variant="outlined"
+                    placeholder ="Nombre"
+                    value = {nombre}
+                    onChange = {event => setNombre(event.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                            <Pets />
+                            </InputAdornment>
+                        ),
+                        }}
+                />
+                <TextField  
+                    error = {erredad}
+                    id="Mascota_Edad"
+                    label="Fecha de nacimiento (Aprox)"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {edad}
+                    onChange = {event => setEdad(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    type = "date"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                            <CalendarToday/>
+                            </InputAdornment>
+                        ),
+                        }}  
+                />
+                <TextField
+                    error={errtipo}
+                    id="Mascota_Tipo"
+                    label="Tipo de Mascota"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {tipo}
+                    onChange = {event => setTipo(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "¿Perro, gato u otro?"
+                    
+                />
+                <TextField
+                    error={errraza}  
+                    id="Mascota_Raza"
+                    label="Raza de la mascota"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {raza}
+                    onChange = {event => setRaza(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "Raza (si aplica)"
                         
-                    />
-                    <TextField       
-                        id="Mascota_Raza"
-                        label="Raza de la mascota"
-                        style={{ margin: 8 }}
-                        fullWidth
-                        value = {raza}
-                        onChange = {event => setRaza(event.target.value)}
-                        margin="normal"
-                        variant="outlined"
-                        placeholder = "Raza (si aplica)"
-                          
-                    />
-                    <TextField
-                        id="Mascota_Descripcion"
-                        label="Descripción"
-                        style={{ margin: 8 }}
-                        fullWidth
-                        value = {descrip}
-                        onChange = {event => setDescrip(event.target.value)}
-                        margin="normal"
-                        variant="outlined"
-                        placeholder = "Datos extra sobre la mascota"
-                        InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <Info/>
-                              </InputAdornment>
-                            ),
-                          }}  
-                    />
+                />
+                <TextField
+                    error={errdescrip}
+                    id="Mascota_Descripcion"
+                    label="Descripción"
+                    style={{ margin: 8 }}
+                    fullWidth
+                    value = {descrip}
+                    onChange = {event => setDescrip(event.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    placeholder = "Datos extra sobre la mascota"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                            <Info/>
+                            </InputAdornment>
+                        ),
+                        }}  
+                />
                     <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
                         <InputLabel className={classes.label} id="demo-simple-select-label">Dueño de la mascota</InputLabel>
                         <Select
@@ -287,7 +346,7 @@ export default function EditarMascota(props) {
                     </Button>
                     <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                         <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                            {succesbar ? "Actualizado con exito": "Error al actualizar"}
+                            {barMensaje }
                         </Alert>
                     </Snackbar>
                     {redi? <Redirect to="/Mascotas" />:null}

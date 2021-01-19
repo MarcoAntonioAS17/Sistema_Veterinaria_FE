@@ -85,7 +85,9 @@ export default function SignInSide() {
 			(response) => {
 				if (response.status === 200) {
           const json = response.data;
-					localStorage.setItem("ACCESS_TOKEN", json.token);
+          localStorage.setItem("ACCESS_TOKEN", json.token);
+          localStorage.setItem("USER_NAME", json.userName);
+          localStorage.setItem("NIVEL", json.nivel);
 					history.push("/");
 				}
 			},

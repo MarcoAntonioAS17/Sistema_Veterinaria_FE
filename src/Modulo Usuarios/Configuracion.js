@@ -28,11 +28,12 @@ export default function SimpleTabs() {
     
     let history = useHistory();
     const Token = localStorage.getItem('ACCESS_TOKEN');
-  const [value, setValue] = React.useState(0);
+    const Nivel = localStorage.getItem('NIVEL');
+    const [value, setValue] = React.useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
   if(!Token){
     history.push("/Login");
@@ -44,35 +45,60 @@ export default function SimpleTabs() {
         }}/>
     );
 
-  }else
-  return (
-    <Router>
-        <Grid item={true} lg={12}>
-            <AppBar position="static">
-                <Tabs 
-                    value={value} 
-                    onChange={handleChange} 
-                    aria-label="simple tabs example"
-                    centered>
-                    
-                    <Tab label="Configuración" icon= {<Settings/>} {...a11yProps(0)} />
-                    <Tab label="Usuarios" icon= {<People/>} {...a11yProps(1)} />
-                    <Tab label="Nuevo Usuario" icon= {<PersonAdd/>} {...a11yProps(2)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <Config/>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Switch>
-                    <Route exact path='/Usuarios/Editar/:id'  component={EditarUsuarios}/>
-                    <Route path='/' component={TablaUsuarios} />
-                </Switch>
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <FormularioUsuario/>
-            </TabPanel>
-        </Grid>
-    </Router>
-  );
+  }else{
+      if (Nivel < 2){
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            
+                            <Tab label="Configuración" icon= {<Settings/>} {...a11yProps(0)} />
+                            <Tab label="Usuarios" icon= {<People/>} {...a11yProps(1)} />
+                            <Tab label="Nuevo Usuario" icon= {<PersonAdd/>} {...a11yProps(2)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+                        <Config/>
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <Switch>
+                            <Route exact path='/Usuarios/Editar/:id'  component={EditarUsuarios}/>
+                            <Route path='/' component={TablaUsuarios} />
+                        </Switch>
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <FormularioUsuario/>
+                    </TabPanel>
+                </Grid>
+            </Router>
+        );
+      }else{
+        return (
+            <Router>
+                <Grid item={true} lg={12}>
+                    <AppBar position="static">
+                        <Tabs 
+                            value={value} 
+                            onChange={handleChange} 
+                            aria-label="simple tabs example"
+                            centered>
+                            
+                            <Tab label="Configuración" icon= {<Settings/>} {...a11yProps(0)} />
+                        </Tabs>
+                    </AppBar>
+                    <TabPanel value={value} index={0}>
+                        <Config/>
+                    </TabPanel>
+                </Grid>
+            </Router>
+        );
+      }
+  }
+  
+  
 }

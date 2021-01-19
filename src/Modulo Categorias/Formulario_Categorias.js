@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import axios from 'axios';
 import {
     makeStyles,
@@ -6,7 +6,7 @@ import {
     Snackbar,
     IconButton
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -14,10 +14,6 @@ import{
     Cancel
 } from '@material-ui/icons';
 
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles(() => ({
     
@@ -32,13 +28,22 @@ export default function FormMascotas() {
     const classes = useStyles();
 
     const Token = localStorage.getItem('ACCESS_TOKEN');
-    const [nombre, setNombre] = React.useState("");
+    const [nombre, setNombre] = useState("");
     
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
+    const [errnombre, setErrNombre] = useState(false);
+    
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
 
     const handleGuardarClick = () => {
-        
+        setErrNombre(false);
+        if (!nombre.match("^[A-Za-z ]+$")){
+            setErrNombre(true);
+            setOpenbar(true);
+            setSuccesbar(false);
+            return;
+        }
+
         axios.post ('http://localhost:50563/api/Categorias/',
             {
                 "nombre": nombre
@@ -89,6 +94,9 @@ export default function FormMascotas() {
             <form className = {classes.Form}>
                 
                 <TextField
+                    required = {true}
+                    error = {errnombre}
+                    helperText = "No numeros"
                     id="categoria_Nombre"
                     label="Nombre de la categoría"
                     style={{ margin: 8 }}

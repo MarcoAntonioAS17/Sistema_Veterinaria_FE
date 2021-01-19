@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState} from 'react'
 import axios from 'axios';
 import {
     Button,
@@ -7,7 +7,7 @@ import {
     Snackbar,
     Typography
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -18,10 +18,6 @@ import{
 } from '@material-ui/icons';
 import { Link, Redirect } from 'react-router-dom';
 
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles(() => ({
     button: {
@@ -38,20 +34,24 @@ export default function EditarProveedores(props) {
 
     const classes = useStyles();
     const Token = localStorage.getItem('ACCESS_TOKEN');
-    const [idProveedor] = React.useState(props.match.params.id);
+    const [idProveedor] = useState(props.match.params.id);
     
-    const [nombre, setNombre] = React.useState("");
-    const [telefono, setTelefono] = React.useState("");
-    const [correo, setCorreo] = React.useState("");
+    const [nombre, setNombre] = useState("");
+    const [telefono, setTelefono] = useState("");
+    const [correo, setCorreo] = useState("");
     
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
-    const [redi, setRedi] = React.useState(false);
+    const [errNombre, setErrNombre] = useState(false);
+    const [errTelefono, setErrTelefono] = useState(false);
+    const [errCorreo, setErrCorreo] = useState(false);
+
+    const [barMensaje, setBarMensaje] = useState("");
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
+    const [redi, setRedi] = useState(false);
 
     const handleClose = (event, reason) => {
         if (succesbar)
             setRedi(true);
-
         if (reason === 'clickaway') {
           return;
         }
@@ -59,7 +59,51 @@ export default function EditarProveedores(props) {
         setOpenbar(false);
     };
 
+    function handleValidar(){
+        let error = false;
+        setErrNombre(false);
+        setErrTelefono(false);
+        setErrCorreo(false);
+
+        if (nombre.length < 5 || !nombre.match("^[A-Za-z0-9ñ ]+$")) {
+            setErrNombre(true);
+            error = true;
+        }
+        if (telefono.length > 1){
+            if (telefono.length < 9 || !telefono.match("^[0-9-]+$")){
+                setErrTelefono(true);
+                error = true;
+            }
+        }
+        if (correo.length > 0){
+            let lastAtPos = correo.lastIndexOf('@');
+            let lastDotPos = correo.lastIndexOf('.');
+
+            if (!(lastAtPos < lastDotPos && lastAtPos > 0 && correo.indexOf('@@') === -1 && lastDotPos > 2 && (correo.length - lastDotPos) > 2)) {
+                setErrCorreo(true);
+                error = true;
+            }
+        }
+        if (error)
+            setBarMensaje("Campos por corregir");
+        if (correo.length < 1 && telefono.length <1){
+            error =true;
+            setBarMensaje("Ingresa telefono o correo");
+            setErrTelefono(true);
+        }
+        if (error){
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+        return error;
+    }
+
     const handleActualizar = () =>{
+
+        if (handleValidar()){
+            return;
+        }
+
         axios.put ('http://localhost:50563/api/Proveedores/' + idProveedor, {
             "proveedorNombre": nombre,
 			"telefono": telefono,
@@ -78,15 +122,18 @@ export default function EditarProveedores(props) {
                     setCorreo("");
                     setNombre("");
                     setTelefono("");
+                    setBarMensaje("Actualizado con exito")
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al actualizar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al actualizar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -121,6 +168,7 @@ export default function EditarProveedores(props) {
             <Typography variant="h4"> Actualizar datos de proveedor {idProveedor}</Typography>
             <form>
                 <TextField
+                    error = {errNombre}
                     id="Proveedor_Nombre"
                     label="Nombre del Proveedor"
                     style={{ margin: 8 }}
@@ -140,7 +188,7 @@ export default function EditarProveedores(props) {
                       }}
                 />
                 <TextField
-                    
+                    error = {errTelefono}
                     id="Proveedor_Telefono"
                     label="Número de telefono"
                     style={{ margin: 8 }}
@@ -160,6 +208,7 @@ export default function EditarProveedores(props) {
                     
                 />
                 <TextField
+                    error = {errCorreo}
                     id="Proveedor_Email"
                     label="Correo electrónico"
                     style={{ margin: 8 }}
@@ -190,7 +239,7 @@ export default function EditarProveedores(props) {
                 </Button>
                 <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                        {succesbar ? "Actualizado con exito": "Error al actualizar"}
+                        {barMensaje}
                     </Alert>
                 </Snackbar>
                 {redi? <Redirect to="/Proveedores" />:null}

@@ -11,7 +11,7 @@ import {
     InputLabel,
     Typography
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -20,11 +20,6 @@ import{
     Cancel
 } from '@material-ui/icons';
 import { Link, Redirect } from 'react-router-dom';
-
-
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -59,16 +54,59 @@ export default function EditarUsuarios(props) {
     const [passwordConfi, setPasswordConfi] = useState("");
     const [nivel, setNivel] = useState(2);
 
+    const [errorName, setErrorN] = useState(false);
+    const [errorPass, setErrorP] = useState(false);
+    const [errorPassN, setErrorPN] = useState(false);
+    const [errorPassNC, setErrorPNC] = useState(false);
+
+
     const [openbar, setOpenbar] = useState(false);
     const [succesbar, setSuccesbar] = useState(false);
+    const [barMensaje, setBarMensaje] = useState("");
     const [redi, setRedi] = useState(false);
 
-    const handleActualizar = () => {
+    function handleValidacion(){
+        let error = false;
+        setErrorP(false);
+        setErrorN(false);
+        setErrorPN(false);
+        setErrorPNC(false);
+
         if (passwordNueva !== passwordConfi){
+            setErrorPNC(true);
+            setErrorPN(true);
+            setBarMensaje("Las contraseñas no coinciden");
             setOpenbar(true);
             setSuccesbar(false);
+            return true;
+        }
+        if (userName.length < 8) {
+            setErrorN(true);
+            error = true;
+        }
+        if (password.length < 6){
+            setErrorP(true);
+            error = true;
+        }
+        if (passwordNueva.length < 6){
+            setErrorPN(true);
+            error = true;
+        }
+        if (error){
+            setBarMensaje("Hay campos por corregir");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+        
+        return error;
+    }
+
+    const handleActualizar = () => {
+        
+        if (handleValidacion()){
+            
             return;
-        } 
+        }
         
         axios.put ('http://localhost:50563/api/Usuarios/'+idUser,
 		{
@@ -86,16 +124,18 @@ export default function EditarUsuarios(props) {
 			(response) => {
                 
 				if (response.data.status === "Success") {
-                    
+                    setBarMensaje("Regitrado exitosamente");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al registrar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al registrar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -127,7 +167,8 @@ export default function EditarUsuarios(props) {
 
 
     const handleClose = (event, reason) => {
-        setRedi(true);
+        if (succesbar)
+            setRedi(true);
         if (reason === 'clickaway') {
           return;
         }
@@ -141,6 +182,8 @@ export default function EditarUsuarios(props) {
             <Typography variant="h4"> Actualizar datos de usuario: {userName}</Typography>
             <form>
                 <TextField
+                    disabled
+                    error = {errorName}
                     id="User_userName"
                     label="Nombre"
                     style={{ margin: 8 }}
@@ -149,6 +192,7 @@ export default function EditarUsuarios(props) {
                     required = {true}
                     variant="outlined"
                     placeholder ="Ingrese su nombre de usuario"
+                    helperText= "Min. 8 caracteres"
                     value = {userName}
                     onChange = {event => setUserName(event.target.value)}
                     InputProps={{
@@ -161,7 +205,7 @@ export default function EditarUsuarios(props) {
                 />
                 
                 <TextField
-                    
+                    error={errorPass}
                     id="User_password"
                     label="Contraseña actual"
                     style={{ margin: 8 }}
@@ -172,6 +216,7 @@ export default function EditarUsuarios(props) {
                     margin="normal"
                     variant="outlined"
                     type = "password"
+                    helperText= "Min. 6 caracteres"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -183,6 +228,7 @@ export default function EditarUsuarios(props) {
                 />
 
                 <TextField
+                    error={errorPassN}
                     id="User_password"
                     label="Contraseña nueva"
                     style={{ margin: 8 }}
@@ -193,6 +239,7 @@ export default function EditarUsuarios(props) {
                     margin="normal"
                     variant="outlined"
                     type = "password"
+                    helperText= "Min. 6 caracteres"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -204,7 +251,7 @@ export default function EditarUsuarios(props) {
                 />
                 
                 <TextField
-                    
+                    error={errorPassNC}
                     id="User_password"
                     label="Confirmar contraseña"
                     style={{ margin: 8 }}
@@ -215,6 +262,7 @@ export default function EditarUsuarios(props) {
                     margin="normal"
                     variant="outlined"
                     type = "password"
+                    helperText= "Min. 6 caracteres"
                     InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -251,7 +299,7 @@ export default function EditarUsuarios(props) {
                 </Button>
                 <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                        {succesbar ? "Registrado con exito": "Error al registrar"}
+                        {barMensaje}
                     </Alert>
                 </Snackbar>
                 {redi? <Redirect to="/Usuarios" />:null}

@@ -69,15 +69,17 @@ export default function FormCompras() {
     const [fecha, setFecha] = useState(date.toISOString().slice(0,10));
     const [hora, setHora] = useState(date.toString().slice(16,21));
     const [rProveedor, setRProveedor] = useState(1);
-    const [proveedores, setProveedores] = React.useState(null);
+    const [proveedores, setProveedores] = useState(null);
     const [codigo_pro, setCodigo_pro] = useState("");
     const [productos, setProductos] = useState(null);
     const [product_selec, setProduc_selec] = useState([]);
     const [cantidad, setCantidad] = useState(0);
-    const [prov_active, setProv_active] = useState(true);
+    const [prov_active, setProv_active] = useState(true);    
     
-    const [openbar, setOpenbar] = React.useState(false);
-    const [succesbar, setSuccesbar] = React.useState(false);
+    const [errcantidad, setErrCantidad] = useState(false);
+
+    const [openbar, setOpenbar] = useState(false);
+    const [succesbar, setSuccesbar] = useState(false);
     const [mensaje, setMensaje] = useState(" ");
 
     const [rows] = useState([]);
@@ -206,7 +208,6 @@ export default function FormCompras() {
     const handleProveedorChange = (event) =>{
         
         setRProveedor(event.target.value)
-        console.log("Proveedor id=>"+event.target.value);
         setProduc_selec([]);
         var productos_select = [];
         productos.forEach(function (item){
@@ -229,7 +230,11 @@ export default function FormCompras() {
     }else{
         
         const handleAgregarProducto = () => {
+
+            setErrCantidad(false);
+
             if (cantidad < 1){
+                setErrCantidad(true);
                 setMensaje("Asigna una cantidad");
                 setOpenbar(true);
                 setSuccesbar(false);
@@ -339,6 +344,7 @@ export default function FormCompras() {
                         </FormControl>
                                         
                         <TextField
+                            error = {errcantidad}
                             id="Producto_Cantidad"
                             label="Cantidad"
                             className={classes.input33}
@@ -378,11 +384,6 @@ export default function FormCompras() {
                         >
                             Finalizar venta
                         </Button>
-                        <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
-                            <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {mensaje}
-                            </Alert>
-                        </Snackbar>
                         <Button
                             className = {classes.button}
                             variant="contained"
@@ -395,7 +396,11 @@ export default function FormCompras() {
                         </div>
                         </div>
                     ):null}
-                    
+                    <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
+                            {mensaje}
+                        </Alert>
+                    </Snackbar>
                 </form>
                 
             </React.Fragment>

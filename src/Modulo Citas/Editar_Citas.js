@@ -10,7 +10,7 @@ import {
     MenuItem,
     InputLabel
     } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '../Componentes_Genericos/Alerta';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import{
     Save,
@@ -22,9 +22,6 @@ import{
 import { Link, Redirect} from 'react-router-dom';
 
 
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }  
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -60,15 +57,58 @@ export default function Editar_Citas(props) {
     const [rmascota, setRmascota] = useState('');
     const [notas, setNotas] = useState("");
 
+    const [errnotas, setErrNotas] = useState(false);
+    const [err_rmascota, setErrRmascota] = useState(false);
+
     const [clientes, setClientes] = useState(null);
     const [mascotas, setMascotas] = useState(null);
 
+    const [barMensaje, setBarMensaje] = useState("");
     const [openbar, setOpenbar] = useState(false);
     const [succesbar, setSuccesbar] = useState(false);
     const [redi, setRedi] = React.useState(false);
 
+    function validar_campos(){
+        let error = false;
+        setErrRmascota(false);
+        setErrNotas(false);
+
+        if (notas.length > 0){
+            if (!notas.match("^[A-Za-z0-9 ]+$")){
+                error = true;
+                setErrNotas(true);
+            }
+        }
+        if (mascotas == null || mascotas.length < 1){
+            error = true
+            setErrRmascota(true);
+        }else{
+            let encontrado = false;
+            mascotas.forEach(element => {
+                if (parseInt(element.idMascotas) === parseInt(rmascota)){
+                    encontrado = true;
+                }
+            });
+            if (!encontrado){
+                error = true
+                setErrRmascota(true);
+            }
+
+        }
+        if (error){
+            setBarMensaje("Corregir campos");
+            setOpenbar(true);
+            setSuccesbar(false);
+        }
+
+        return error;
+    }
+
     const handleActualizarClick = () => {
         
+        if (validar_campos())
+            return;
+
         axios.put ('http://localhost:50563/api/Citas/'+idCita,
 		    {
                 "RCliente" : parseInt(rcliente),
@@ -92,15 +132,18 @@ export default function Editar_Citas(props) {
                     setTipo("");
                     setNotas("");
                     
+                    setBarMensaje("Cita Actualizada");
                     setOpenbar(true);
                     setSuccesbar(true);
 				}else{
+                    setBarMensaje("Error al actualizar");
                     setOpenbar(true);
                     setSuccesbar(false);
                 }
 			},
 			(error) => {
                 console.log("Exception " + error);
+                setBarMensaje("Error al actualizar");
                 setOpenbar(true);
                 setSuccesbar(false);
             }
@@ -211,7 +254,8 @@ export default function Editar_Citas(props) {
     }
 
     const handleClose = (event, reason) => {
-        setRedi(true);
+        if (succesbar)
+            setRedi(true);
         if (reason === 'clickaway') {
           return;
         }
@@ -220,7 +264,6 @@ export default function Editar_Citas(props) {
     };
 
     const handleCancel = () =>{
-        setTipo("");
         setNotas("");
     }
     
@@ -272,7 +315,9 @@ export default function Editar_Citas(props) {
             return(
                 <React.Fragment>
                     <form>
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Tipo de Cita</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -289,31 +334,32 @@ export default function Editar_Citas(props) {
                         </FormControl>
 
                         <TextField  
-                                id="Cita_Fecha"
-                                label="Fecha de la cita"
-                                style={{ margin: 8 }}
-                                fullWidth
-                                value = {fecha}
-                                onChange = {event => setFecha(event.target.value)}
-                                margin="normal"
-                                variant="outlined"
-                                type = "date"
-                                InputProps={{
-                                    startAdornment: (
-                                    <InputAdornment position="start">
-                                        <CalendarToday/>
-                                    </InputAdornment>
-                                    ),
-                                }}  
-                            />
+                            required = {true}
+                            id="Cita_Fecha"
+                            label="Fecha de la cita"
+                            style={{ margin: 8 }}
+                            fullWidth
+                            value = {fecha}
+                            onChange = {event => setFecha(event.target.value)}
+                            margin="normal"
+                            variant="outlined"
+                            type = "date"
+                            InputProps={{
+                                startAdornment: (
+                                <InputAdornment position="start">
+                                    <CalendarToday/>
+                                </InputAdornment>
+                                ),
+                            }}  
+                        />
 
                         <TextField
+                            required = {true}
                             id="Cita_Hora"
                             label="Hora de la Cita"
                             style={{ margin: 8 }}
                             fullWidth
                             margin="normal"
-                            required = {true}
                             variant="outlined"
                             value = {hora}
                             onChange = {event => setHora(event.target.value)}
@@ -327,7 +373,9 @@ export default function Editar_Citas(props) {
                             }}
                         />
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Cliente</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -339,7 +387,10 @@ export default function Editar_Citas(props) {
                             </Select>
                         </FormControl>
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            error = {err_rmascota}
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Mascota</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -352,6 +403,7 @@ export default function Editar_Citas(props) {
                         </FormControl>
 
                         <TextField
+                            error = {errnotas}
                             id="Cita_Notas"
                             label="Notas"
                             style={{ margin: 8 }}
@@ -381,7 +433,7 @@ export default function Editar_Citas(props) {
                         </Button>
                         <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                             <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {succesbar ? "Registrado con exito": "Error al registrar"}
+                                {barMensaje}
                             </Alert>
                         </Snackbar>
                         {redi? <Redirect to="/Mascotas" />:null}
@@ -407,7 +459,9 @@ export default function Editar_Citas(props) {
             return(
                 <React.Fragment>
                     <form>
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Tipo de Cita</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -423,32 +477,33 @@ export default function Editar_Citas(props) {
                             </Select>
                         </FormControl>
 
-                        <TextField  
-                                id="Cita_Fecha"
-                                label="Fecha de la cita"
-                                style={{ margin: 8 }}
-                                fullWidth
-                                value = {fecha}
-                                onChange = {event => setFecha(event.target.value)}
-                                margin="normal"
-                                variant="outlined"
-                                type = "date"
-                                InputProps={{
-                                    startAdornment: (
-                                    <InputAdornment position="start">
-                                        <CalendarToday/>
-                                    </InputAdornment>
-                                    ),
-                                }}  
-                            />
+                        <TextField
+                            required = {true}
+                            id="Cita_Fecha"
+                            label="Fecha de la cita"
+                            style={{ margin: 8 }}
+                            fullWidth
+                            value = {fecha}
+                            onChange = {event => setFecha(event.target.value)}
+                            margin="normal"
+                            variant="outlined"
+                            type = "date"
+                            InputProps={{
+                                startAdornment: (
+                                <InputAdornment position="start">
+                                    <CalendarToday/>
+                                </InputAdornment>
+                                ),
+                            }}  
+                        />
 
                         <TextField
+                            required = {true}
                             id="Cita_Hora"
                             label="Hora de la Cita"
                             style={{ margin: 8 }}
                             fullWidth
                             margin="normal"
-                            required = {true}
                             variant="outlined"
                             value = {hora}
                             onChange = {event => setHora(event.target.value)}
@@ -462,7 +517,9 @@ export default function Editar_Citas(props) {
                             }}
                         />
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            required = {true}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Cliente</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -474,7 +531,10 @@ export default function Editar_Citas(props) {
                             </Select>
                         </FormControl>
                         
-                        <FormControl variant="outlined" fullWidth={true} className={classes.formControl} >
+                        <FormControl 
+                            required = {true}
+                            error = {err_rmascota}
+                            variant="outlined" fullWidth={true} className={classes.formControl} >
                             <InputLabel className={classes.label} id="demo-simple-select-label">Mascota</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -487,6 +547,7 @@ export default function Editar_Citas(props) {
                         </FormControl>
 
                         <TextField
+                            error = {errnotas}
                             id="Cita_Notas"
                             label="Notas"
                             style={{ margin: 8 }}
@@ -508,7 +569,7 @@ export default function Editar_Citas(props) {
                         
                         <Snackbar open={openbar} autoHideDuration={4000} onClose={handleClose}>
                             <Alert onClose={handleClose} severity= {succesbar ? "success" :"error"}>
-                                {succesbar ? "Actualizado con exito": "Error al registrar"}
+                                {barMensaje}
                             </Alert>
                         </Snackbar>
                         <Link to={"/Citas"} className = {classes.enlace}>
